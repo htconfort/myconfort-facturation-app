@@ -5,6 +5,7 @@ export default {
     extend: {
       fontFamily: {
         'manrope': ['Manrope', 'sans-serif'],
+        'caveat': ['Caveat', 'cursive'], // Ajout de la police Caveat
       },
       colors: {
         'myconfort': {

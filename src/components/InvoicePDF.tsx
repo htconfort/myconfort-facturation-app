@@ -47,39 +47,26 @@ export const InvoicePDF = React.forwardRef<HTMLDivElement, InvoicePDFProps>(
       : "w-full bg-white";
 
     return (
-      <div ref={ref} className={containerClass} style={{ fontFamily: 'Inter, sans-serif', color: '#080F0F', fontSize: '12px', lineHeight: '1.3' }}>
+      <div ref={ref} className={containerClass} style={{ fontFamily: 'Inter, sans-serif', color: '#080F0F', fontSize: '11px', lineHeight: '1.3' }}>
         {/* Bordure supérieure verte */}
         <div className="h-0.5 bg-[#477A0C]"></div>
         
         {/* En-tête de la facture */}
         <div className="p-4 border-b-2 border-[#477A0C]">
+          {/* Le logo a été retiré comme demandé */}
+
           <div className="flex justify-between items-start">
-            {/* Logo et informations entreprise */}
+            {/* Informations entreprise */}
             <div className="flex-1">
-              <div className="flex items-center mb-3">
-                <div className="bg-[#477A0C] rounded-full w-10 h-10 flex items-center justify-center text-[#F2EFE2] text-2xl mr-3">
-                  🌸
-                </div>
-                <div>
-                  <h1 className="text-2xl font-black text-[#477A0C] tracking-tight">
-                    MYCONFORT
-                  </h1>
-                  <p className="text-sm font-medium" style={{ color: '#080F0F' }}>Facturation Professionnelle</p>
-                  
-                  {/* Mention légale Article L224‑59 - Fond blanc sans encadré */}
-                  <div className="mt-2">
-                    <div className="font-bold text-xs mb-0.5" style={{ color: '#080F0F' }}>
-                      ⚖️ Article L224‑59 du Code de la consommation
-                    </div>
-                    <div className="text-xs font-bold leading-tight" style={{ color: '#080F0F', fontSize: '10px' }}>
-                      « Avant la conclusion de tout contrat entre un consommateur et un professionnel à l'occasion d'une foire, d'un salon […] le professionnel informe le consommateur qu'il ne dispose pas d'un délai de rétractation. »
-                    </div>
-                  </div>
-                </div>
+              <div className="text-center"> {/* Ajout de text-center */}
+                <h1 className="text-6xl font-black text-[#477A0C] tracking-tight"> {/* Taille de police augmentée à text-6xl */}
+                  MYCONFORT
+                </h1>
+                <p className="text-4xl font-caveat" style={{ color: '#080F0F' }}>Quand on dort bien, on vit bien.</p> {/* Nouvelle phrase avec police manuscrite, taille augmentée à text-4xl */}
               </div>
               
-              <div className="text-xs space-y-0.5" style={{ color: '#080F0F' }}>
-                <p className="font-semibold text-sm" style={{ color: '#080F0F' }}>MYCONFORT</p>
+              <div className="text-sm space-y-0.5 mt-3" style={{ color: '#080F0F' }}> {/* Changé de text-xs à text-sm */}
+                <p className="font-semibold text-base" style={{ color: '#080F0F' }}>MYCONFORT</p> {/* Changé de text-sm à text-base */}
                 <p className="font-semibold">88 Avenue des Ternes</p>
                 <p>75017 Paris, France</p>
                 <p>SIRET: 824 313 530 00027</p>
@@ -92,7 +79,7 @@ export const InvoicePDF = React.forwardRef<HTMLDivElement, InvoicePDFProps>(
             {/* Informations facture */}
             <div className="text-right">
               <div className="bg-[#477A0C] text-[#F2EFE2] px-4 py-2 rounded-lg mb-3">
-                <h2 className="text-lg font-bold">FACTURE</h2>
+                <h2 className="text-xl font-bold">FACTURE</h2> {/* Changé de text-lg à text-xl */}
               </div>
               
               <div className="space-y-1 text-xs">
@@ -122,8 +109,8 @@ export const InvoicePDF = React.forwardRef<HTMLDivElement, InvoicePDFProps>(
               <h3 className="text-sm font-bold text-[#477A0C] mb-2 border-b border-[#477A0C] pb-1">
                 FACTURER À
               </h3>
-              <div className="space-y-1 text-xs">
-                <p className="font-bold text-sm" style={{ color: '#080F0F' }}>{invoice.client.name}</p>
+              <div className="space-y-1 text-sm"> {/* Changé de text-xs à text-sm */}
+                <p className="font-bold text-base" style={{ color: '#080F0F' }}>{invoice.client.name}</p> {/* Changé de text-sm à text-base */}
                 <p style={{ color: '#080F0F' }}>{invoice.client.address}</p>
                 <p style={{ color: '#080F0F' }}>{invoice.client.postalCode} {invoice.client.city}</p>
                 {invoice.client.siret && <p style={{ color: '#080F0F' }}>SIRET: {invoice.client.siret}</p>}
@@ -142,7 +129,7 @@ export const InvoicePDF = React.forwardRef<HTMLDivElement, InvoicePDFProps>(
               <h3 className="text-sm font-bold text-[#477A0C] mb-2 border-b border-[#477A0C] pb-1">
                 INFORMATIONS COMPLÉMENTAIRES
               </h3>
-              <div className="space-y-1 text-xs">
+              <div className="space-y-1 text-sm"> {/* Changé de text-xs à text-sm */}
                 {invoice.client.housingType && (
                   <p style={{ color: '#080F0F' }}><span className="font-semibold">Type de logement:</span> {invoice.client.housingType}</p>
                 )}
@@ -220,6 +207,16 @@ export const InvoicePDF = React.forwardRef<HTMLDivElement, InvoicePDFProps>(
                 ))}
               </tbody>
             </table>
+          </div>
+
+          {/* Mention légale Article L224‑59 - Fond blanc sans encadré */}
+          <div className="mt-4">
+            <div className="font-bold text-xs mb-0.5" style={{ color: '#080F0F' }}>
+              ⚖️ Article L224‑59 du Code de la consommation
+            </div>
+            <div className="text-xs font-bold leading-tight" style={{ color: '#080F0F', fontSize: '10px' }}>
+              « Avant la conclusion de tout contrat entre un consommateur et un professionnel à l'occasion d'une foire, d'un salon […] le professionnel informe le consommateur qu'il ne dispose pas d'un délai de rétractation. »
+            </div>
           </div>
 
           {/* Totaux avec gestion acompte */}
@@ -317,7 +314,7 @@ export const InvoicePDF = React.forwardRef<HTMLDivElement, InvoicePDFProps>(
                 
                 <div className="bg-white p-2 rounded border mt-2">
                   <p className="text-xs" style={{ color: '#080F0F' }}>
-                    Paiement à réception de facture. En cas de retard de paiement, des pénalités de 3 fois le taux d'intérêt légal seront appliquées.
+                    Si vous devez envoyer des règlements par chèque. Voici l'adresse : SAV htconfort 8 rue du gregal 66510 st hippolyte 0661486023
                   </p>
                 </div>
               </div>
@@ -337,7 +334,9 @@ export const InvoicePDF = React.forwardRef<HTMLDivElement, InvoicePDFProps>(
                 <>
                   <h3 className="text-sm font-bold text-[#477A0C] mb-2 mt-3">LIVRAISON</h3>
                   <div className="text-xs bg-white p-2 rounded border">
-                    <p style={{ color: '#080F0F' }}>{invoice.delivery.notes}</p>
+                    <p style={{ color: '#080F0F' }}>
+                      {invoice.delivery.notes}
+                    </p>
                   </div>
                 </>
               )}
@@ -434,7 +433,7 @@ export const InvoicePDF = React.forwardRef<HTMLDivElement, InvoicePDFProps>(
 
             <div>
               <h3 className="font-bold text-[#477A0C] mb-1">Art. 13 - Livraison Incomplète ou Non-Conforme</h3>
-              <p className="text-justify">En cas de livraison endommagée ou non conforme, mentionnez-le sur le bon de livraison et refusez le produit. Si l'erreur est constatée après le départ du transporteur, contactez-nous sous 72h ouvrables.</p>
+              <p className="text-justify">En cas de livraison endommagée ou non conforme, mentionnez-le sur le bon de livraison et refusez le produit. Si l'erreur est constatée après le départ du transporteur, contactez-us sous 72h ouvrables.</p>
             </div>
 
             <div>

@@ -62,6 +62,8 @@ export default function MyComfortApp() {
   const [savedInvoices, setSavedInvoices] = useState<SupabaseInvoice[]>([]);
   const [savedClients, setSavedClients] = useState<Client[]>([]);
   const [supabaseProducts, setSupabaseProducts] = useState<Product[]>([]);
+  const [isSaving, setIsSaving] = useState(false); // New state for saving
+  const [isDownloadingPDF, setIsDownloadingPDF] = useState(false); // New state for PDF download
 
   // Initialiser EmailJS au chargement
   useEffect(() => {
@@ -147,6 +149,7 @@ export default function MyComfortApp() {
       return;
     }
     
+    setIsSaving(true); // Set saving state to true
     try {
       alert("💾 Sauvegarde en cours...");
       
@@ -203,20 +206,31 @@ export default function MyComfortApp() {
     } catch (error) {
       console.error('❌ Erreur sauvegarde Supabase:', error);
       alert(`❌ Erreur: ${error.message}`);
+    } finally {
+      setIsSaving(false); // Set saving state to false
     }
   };
 
-  const downloadPDF = () => {
-    const doc = new jsPDF();
-    doc.text(`Facture MyConfort\nClient : ${client.nom || "-"}\nDate : ${new Date().toLocaleDateString('fr-FR')}\nTotal : ${total}€`, 10, 10);
-    produits.forEach((p, i) => {
-      doc.text(
-        `${i + 1}. ${p.nom} (${p.taille}) x${p.quantite} = ${p.prix * p.quantite}€`,
-        10,
-        25 + i * 10
-      );
-    });
-    doc.save(`Facture-${client.nom || "client"}.pdf`);
+  const downloadPDF = async () => {
+    setIsDownloadingPDF(true); // Set downloading state to true
+    try {
+      const doc = new jsPDF();
+      doc.text(`Facture MyConfort\nClient : ${client.nom || "-"}\nDate : ${new Date().toLocaleDateString('fr-FR')}\nTotal : ${total}€`, 10, 10);
+      produits.forEach((p, i) => {
+        doc.text(
+          `${i + 1}. ${p.nom} (${p.taille}) x${p.quantite} = ${p.prix * p.quantite}€`,
+          10,
+          25 + i * 10
+        );
+      });
+      doc.save(`Facture-${client.nom || "client"}.pdf`);
+      alert("✅ PDF téléchargé avec succès !");
+    } catch (error) {
+      console.error('❌ Erreur téléchargement PDF:', error);
+      alert(`❌ Erreur lors du téléchargement du PDF: ${error.message}`);
+    } finally {
+      setIsDownloadingPDF(false); // Set downloading state to false
+    }
   };
 
   // Fonction pour créer une facture avec la nouvelle méthode
@@ -859,23 +873,45 @@ export default function MyComfortApp() {
           <div className="flex gap-3">
             <button
               className={`px-6 py-2 rounded font-bold flex items-center gap-2 transition-colors ${
-                isSupabaseConnected 
+                isSupabaseConnected && !isSaving // Add isSaving to disabled
                   ? 'bg-blue-700 hover:bg-blue-800 text-white' 
                   : 'bg-gray-400 text-gray-600 cursor-not-allowed'
               }`}
               onClick={saveToSupabase}
-              disabled={!client.nom || produits.length === 0}
+              disabled={!client.nom || produits.length === 0 || !isSupabaseConnected || isSaving}
             >
-              <Save className="w-4 h-4" />
-              💾 Sauvegarder Supabase
+              {isSaving ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <span>Sauvegarde...</span>
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4" />
+                  <span>💾 Sauvegarder Supabase</span>
+                </>
+              )}
             </button>
             <button
-              className="bg-green-700 text-white px-6 py-2 rounded font-bold flex items-center gap-2 hover:bg-green-800 transition-colors"
+              className={`px-6 py-2 rounded font-bold flex items-center gap-2 transition-colors ${
+                isDownloadingPDF
+                  ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                  : 'bg-green-700 hover:bg-green-800 text-white'
+              }`}
               onClick={downloadPDF}
-              disabled={!client.nom || produits.length === 0}
+              disabled={!client.nom || produits.length === 0 || isDownloadingPDF}
             >
-              <Download className="w-4 h-4" />
-              🖨️ Télécharger PDF
+              {isDownloadingPDF ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <span>Téléchargement...</span>
+                </>
+              ) : (
+                <>
+                  <Download className="w-4 h-4" />
+                  <span>🖨️ Télécharger PDF</span>
+                </>
+              )}
             </button>
             <button
               className={`px-6 py-2 rounded font-bold flex items-center gap-2 transition-colors ${
