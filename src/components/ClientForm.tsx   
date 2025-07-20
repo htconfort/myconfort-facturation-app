@@ -1,0 +1,130 @@
+// src/components/ClientForm.tsx
+import React from "react";
+
+export interface Client {
+  name: string;
+  address: string;
+  postalCode: string;
+  city: string;
+  phone: string;
+  email: string;
+  siret?: string;
+  lodgingType?: string;
+}
+
+interface ClientFormProps {
+  client: Client;
+  onChange: (newClient: Client) => void;
+}
+
+const ClientForm: React.FC<ClientFormProps> = ({ client, onChange }) => {
+  // Gère la modification d’un champ du formulaire
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    onChange({
+      ...client,
+      [name]: value,
+    });
+  };
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <label className="block font-medium mb-1">Nom complet*</label>
+        <input
+          name="name"
+          type="text"
+          value={client.name}
+          onChange={handleChange}
+          className="w-full border rounded p-2"
+          placeholder="Nom du client"
+        />
+      </div>
+      <div>
+        <label className="block font-medium mb-1">Adresse*</label>
+        <input
+          name="address"
+          type="text"
+          value={client.address}
+          onChange={handleChange}
+          className="w-full border rounded p-2"
+          placeholder="Adresse du client"
+        />
+      </div>
+      <div className="flex space-x-2">
+        <div className="flex-1">
+          <label className="block font-medium mb-1">Code postal*</label>
+          <input
+            name="postalCode"
+            type="text"
+            value={client.postalCode}
+            onChange={handleChange}
+            className="w-full border rounded p-2"
+            placeholder="Code postal"
+          />
+        </div>
+        <div className="flex-1">
+          <label className="block font-medium mb-1">Ville*</label>
+          <input
+            name="city"
+            type="text"
+            value={client.city}
+            onChange={handleChange}
+            className="w-full border rounded p-2"
+            placeholder="Ville"
+          />
+        </div>
+      </div>
+      <div>
+        <label className="block font-medium mb-1">Téléphone*</label>
+        <input
+          name="phone"
+          type="tel"
+          value={client.phone}
+          onChange={handleChange}
+          className="w-full border rounded p-2"
+          placeholder="Téléphone"
+        />
+      </div>
+      <div>
+        <label className="block font-medium mb-1">Email*</label>
+        <input
+          name="email"
+          type="email"
+          value={client.email}
+          onChange={handleChange}
+          className="w-full border rounded p-2"
+          placeholder="Email"
+        />
+      </div>
+      <div>
+        <label className="block font-medium mb-1">SIRET (optionnel)</label>
+        <input
+          name="siret"
+          type="text"
+          value={client.siret || ""}
+          onChange={handleChange}
+          className="w-full border rounded p-2"
+          placeholder="SIRET"
+        />
+      </div>
+      <div>
+        <label className="block font-medium mb-1">Type de logement</label>
+        <select
+          name="lodgingType"
+          value={client.lodgingType || ""}
+          onChange={handleChange}
+          className="w-full border rounded p-2"
+        >
+          <option value="">Sélectionner</option>
+          <option value="Appartement">Appartement</option>
+          <option value="Maison">Maison</option>
+          <option value="Studio">Studio</option>
+          <option value="Autre">Autre</option>
+        </select>
+      </div>
+    </div>
+  );
+};
+
+export default ClientForm;

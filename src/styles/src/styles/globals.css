@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap');
+
+html, body {
+  font-family: 'Manrope', Arial, sans-serif;
+  background: #f4f7fa;
+  color: #1a202c;
+  min-height: 100vh;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+h1, h2, h3, h4 {
+  font-weight: 700;
+  color: #14281D;
+  margin-bottom: 0.4em;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+}
+
+input, select, textarea {
+  outline: none;
+  border-radius: 0.5rem;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  background: #ececec;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d1e6bc;
+  border-radius: 8px;
+}
+
+.table-green th {
+  background: #477A0C;
+  color: white;
+}
+
+.bg-green-gradient {
+  background: linear-gradient(135deg, #F2EFE2 0%, #ffffff 100%);
+}
+
+.rounded-xl {
+  border-radius: 1.25rem;
+}
