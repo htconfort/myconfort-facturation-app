@@ -10,6 +10,7 @@ import { PDFPreviewModal } from './components/PDFPreviewModal';
 import { PDFGuideModal } from './components/PDFGuideModal';
 import { GoogleDriveModal } from './components/GoogleDriveModal';
 import { PayloadDebugModal } from './components/PayloadDebugModal';
+import { DebugCenter } from './components/DebugCenter';
 import { SignaturePad } from './components/SignaturePad';
 import { InvoicePDF } from './components/InvoicePDF';
 import { Toast } from './components/ui/Toast';
@@ -61,6 +62,7 @@ function App() {
   const [showPDFGuide, setShowPDFGuide] = useState(false);
   const [showGoogleDriveConfig, setShowGoogleDriveConfig] = useState(false);
   const [showPayloadDebug, setShowPayloadDebug] = useState(false);
+  const [showDebugCenter, setShowDebugCenter] = useState(false);
   const [showSignaturePad, setShowSignaturePad] = useState(false);
   const [showInvoicePreview, setShowInvoicePreview] = useState(true);
   const [toast, setToast] = useState({
@@ -461,7 +463,7 @@ function App() {
         onShowInvoices={() => setShowInvoicesList(true)}
         onShowProducts={() => setShowProductsList(true)}
         onShowGoogleDrive={handleSendPDF}
-        onShowDebug={() => setShowPayloadDebug(true)}
+        onShowDebug={() => setShowDebugCenter(true)}
       />
 
       <main className="container mx-auto px-4 py-6" id="invoice-content">
@@ -506,6 +508,17 @@ function App() {
             </div>
           </div>
         </div>
+
+        {/* Debug Center Section */}
+        {showDebugCenter && (
+          <div className="mb-6">
+            <DebugCenter
+              invoice={invoice}
+              onSuccess={handleEmailJSSuccess}
+              onError={handleEmailJSError}
+            />
+          </div>
+        )}
 
         <InvoiceHeader
           invoice={invoice}
@@ -757,6 +770,7 @@ function App() {
         onError={handleEmailJSError}
       />
 
+      {/* Keep the original PayloadDebugModal for compatibility */}
       <PayloadDebugModal
         isOpen={showPayloadDebug}
         onClose={() => setShowPayloadDebug(false)}
@@ -764,6 +778,18 @@ function App() {
         onSuccess={handleEmailJSSuccess}
         onError={handleEmailJSError}
       />
+
+      {/* Add toggle for Debug Center */}
+      {showDebugCenter && (
+        <div className="fixed top-4 right-4 z-50">
+          <button
+            onClick={() => setShowDebugCenter(false)}
+            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium"
+          >
+            Fermer Debug
+          </button>
+        </div>
+      )}
 
       <SignaturePad
         isOpen={showSignaturePad}
