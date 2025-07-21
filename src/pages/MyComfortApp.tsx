@@ -18,6 +18,9 @@ declare global {
   }
 }
 
+// n8n Webhook URL (PROD)
+const N8N_WEBHOOK_URL = 'https://n8n.srv765811.hstgr.cloud/webhook-test/e7ca38d2-4b2a-4216-9c26-23663529790a';
+
 export default function MyComfortApp() {
   // === Formulaire client ===
   const [client, setClient] = useState({
