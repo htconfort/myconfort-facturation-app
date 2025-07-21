@@ -229,6 +229,17 @@ function App() {
     showToast('📤 Préparation de l\'envoi du PDF MYCONFORT...', 'success');
 
     try {
+      console.log('🔍 DIAGNOSTIC AVANT GÉNÉRATION PDF');
+      console.log('📋 Invoice data:', {
+        invoiceNumber: invoice.invoiceNumber,
+        clientName: invoice.client.name,
+        clientEmail: invoice.client.email,
+        clientPhone: invoice.client.phone,
+        productsCount: invoice.products.length,
+        paymentMethod: invoice.payment.method,
+        totalCalculated: invoice.products.reduce((sum, p) => sum + (p.quantity * p.priceTTC), 0)
+      });
+      
       const pdfBlob = await generatePDFBlobFromPreview();
       if (!pdfBlob) return;
 
@@ -240,6 +251,13 @@ function App() {
       });
 
       const pdfSizeKB = Math.round(pdfBlob.size / 1024);
+      
+      console.log('📄 PDF généré:', {
+        sizeKB: pdfSizeKB,
+        base64Length: base64Data.length,
+        base64Preview: base64Data.substring(0, 50) + '...'
+      });
+      
       showToast('🔐 Validation et envoi vers N8N...', 'success');
       
       // Utiliser le nouveau service avec validation

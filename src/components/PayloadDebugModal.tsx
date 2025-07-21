@@ -29,12 +29,32 @@ export const PayloadDebugModal: React.FC<PayloadDebugModalProps> = ({
       const mockPdfBase64 = 'JVBERi0xLjQKJcOkw7zDtsO4CjIgMCBvYmoKPDwKL0xlbmd0aCAzIDAgUgo+PgpzdHJlYW0K';
       const mockPdfSizeKB = 150;
       
+      console.log('🔍 GÉNÉRATION PAYLOAD DEBUG - DIAGNOSTIC COMPLET');
+      console.log('📋 Données invoice brutes:', {
+        invoiceNumber: invoice.invoiceNumber,
+        clientName: invoice.client.name,
+        clientEmail: invoice.client.email,
+        clientPhone: invoice.client.phone,
+        products: invoice.products.length,
+        totalProducts: invoice.products.reduce((sum, p) => sum + (p.quantity * p.priceTTC), 0)
+      });
+      
       const validation = PayloadValidator.validateAndPrepare(invoice, mockPdfBase64, mockPdfSizeKB);
       
       setDebugData({
         validation: validation,
         timestamp: new Date().toISOString(),
-        invoiceData: invoice
+        invoiceData: invoice,
+        rawPayloadSize: JSON.stringify(validation.payload || {}).length,
+        fieldMapping: {
+          'app → webhook': {
+            'client.phone → clientPhone': invoice.client.phone,
+            'client.email → clientEmail': invoice.client.email,
+            'calculated totalHT → totalHT': validation.payload?.totalHT,
+            'calculated totalTTC → totalTTC': validation.payload?.totalTTC,
+            'products.length → products': invoice.products.length
+          }
+        }
       });
       
       if (validation.isValid) {

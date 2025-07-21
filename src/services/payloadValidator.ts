@@ -70,23 +70,103 @@ export type ValidatedInvoicePayload = z.infer<typeof InvoicePayloadSchema>;
 // 🔍 LOGGER DÉTAILLÉ POUR LE PAYLOAD
 export class PayloadLogger {
   private static logToConsole(payload: any, errors?: z.ZodError): void {
-    console.group('📋 PAYLOAD N8N - ANALYSE DÉTAILLÉE');
+    console.group('🔍 DIAGNOSTIC PAYLOAD JSON - ANALYSE COMPLÈTE');
     
-    // Log du payload brut
-    console.log('📦 PAYLOAD BRUT ENVOYÉ:', JSON.stringify(payload, null, 2));
+    // 🎯 LOG COMPLET AVANT ENVOI (PRIORITÉ ABSOLUE)
+    console.log('📦 PAYLOAD COMPLET À ENVOYER:', JSON.stringify(payload, null, 2));
     
-    // Vérification des champs obligatoires
-    console.group('🔍 VÉRIFICATION CHAMPS OBLIGATOIRES');
-    const requiredFields = [
-      'invoiceNumber', 'invoiceDate', 'eventLocation',
-      'clientName', 'clientEmail', 'clientPhone', 'clientAddress',
-      'advisorName', 'products', 'totalTTC', 'paymentMethod', 'pdfBase64'
+    // 🔍 VÉRIFICATION CHAMPS REQUIS CRITIQUES
+    console.group('⚠️ VÉRIFICATION CHAMPS CRITIQUES REQUIS');
+    const criticalFields = [
+      'clientEmail', 'clientPhone', 'clientName', 'clientAddress',
+      'invoiceNumber', 'invoiceDate', 'totalHT', 'totalTTC',
+      'products', 'paymentMethod', 'pdfBase64'
     ];
     
-    requiredFields.forEach(field => {
+    const missingCriticalFields = criticalFields.filter(field => {
       const value = payload[field];
       const isEmpty = !value || (Array.isArray(value) && value.length === 0) || value === '';
-      console.log(`${isEmpty ? '❌' : '✅'} ${field}:`, isEmpty ? 'MANQUANT' : '✓');
+      if (isEmpty) {
+        console.error(`❌ CHAMP CRITIQUE MANQUANT: ${field}`);
+      } else {
+        console.log(`✅ ${field}:`, typeof value === 'string' && value.length > 50 ? `${value.substring(0, 50)}...` : value);
+      }
+      return isEmpty;
+    });
+    
+    if (missingCriticalFields.length > 0) {
+      console.error('🚨 CHAMPS CRITIQUES MANQUANTS:', missingCriticalFields);
+      console.error('⚠️ LE WEBHOOK N8N RECEVRA UN PAYLOAD INCOMPLET !');
+    } else {
+      console.log('✅ TOUS LES CHAMPS CRITIQUES SONT PRÉSENTS');
+    }
+    console.groupEnd();
+    
+    // 🗺️ MAPPING DES DONNÉES - VÉRIFICATION CORRESPONDANCE
+    console.group('🗺️ MAPPING DES DONNÉES - CORRESPONDANCE EXACTE');
+    const fieldMappings = [
+      { app: 'clientPhone', webhook: 'phone', value: payload.clientPhone },
+      { app: 'clientEmail', webhook: 'email', value: payload.clientEmail },
+      { app: 'totalHT', webhook: 'montantHT', value: payload.totalHT },
+      { app: 'totalTTC', webhook: 'montantTTC', value: payload.totalTTC },
+      { app: 'clientName', webhook: 'clientName', value: payload.clientName },
+      { app: 'invoiceNumber', webhook: 'invoiceNumber', value: payload.invoiceNumber },
+      { app: 'products', webhook: 'products', value: payload.products },
+      { app: 'pdfBase64', webhook: 'fichier_facture', value: payload.pdfBase64 ? 'PDF_PRESENT' : 'PDF_MISSING' }
+    ];
+    
+    fieldMappings.forEach(mapping => {
+      const hasValue = mapping.value !== undefined && mapping.value !== null && mapping.value !== '';
+      console.log(`${hasValue ? '✅' : '❌'} ${mapping.app} → ${mapping.webhook}:`, 
+        hasValue ? (typeof mapping.value === 'string' && mapping.value.length > 30 ? `${mapping.value.substring(0, 30)}...` : mapping.value) : 'MANQUANT'
+      );
+    });
+    console.groupEnd();
+    
+    // 🔍 ANALYSE DÉTAILLÉE DES PRODUITS
+    console.group('📦 ANALYSE DÉTAILLÉE DES PRODUITS');
+    if (payload.products && Array.isArray(payload.products)) {
+      console.log(`📊 Nombre de produits: ${payload.products.length}`);
+      payload.products.forEach((product: any, index: number) => {
+        console.log(`Produit ${index + 1}:`, {
+          name: product.name,
+          quantity: product.quantity,
+          unitPriceTTC: product.unitPriceTTC,
+          totalTTC: product.totalTTC,
+          category: product.category
+        });
+      });
+    } else {
+      console.error('❌ PRODUITS MANQUANTS OU FORMAT INVALIDE');
+    }
+    console.groupEnd();
+    
+    // 🔍 ANALYSE DU PDF
+    console.group('📄 ANALYSE DU PDF');
+    if (payload.pdfBase64) {
+      console.log('✅ PDF présent');
+      console.log('📊 Taille base64:', payload.pdfBase64.length, 'caractères');
+      console.log('📊 Taille estimée PDF:', payload.pdfSizeKB, 'KB');
+      console.log('🔍 Début base64:', payload.pdfBase64.substring(0, 50) + '...');
+    } else {
+      console.error('❌ PDF MANQUANT - CRITIQUE POUR N8N');
+    }
+    console.groupEnd();
+    
+    // 🔍 VÉRIFICATION TYPES DE DONNÉES
+    console.group('🔍 VÉRIFICATION TYPES DE DONNÉES');
+    const typeChecks = [
+      { field: 'totalHT', expected: 'number', actual: typeof payload.totalHT },
+      { field: 'totalTTC', expected: 'number', actual: typeof payload.totalTTC },
+      { field: 'taxRate', expected: 'number', actual: typeof payload.taxRate },
+      { field: 'depositAmount', expected: 'number', actual: typeof payload.depositAmount },
+      { field: 'products', expected: 'array', actual: Array.isArray(payload.products) ? 'array' : typeof payload.products },
+      { field: 'termsAccepted', expected: 'boolean', actual: typeof payload.termsAccepted }
+    ];
+    
+    typeChecks.forEach(check => {
+      const isCorrectType = check.actual === check.expected;
+      console.log(`${isCorrectType ? '✅' : '❌'} ${check.field}: attendu ${check.expected}, reçu ${check.actual}`);
     });
     console.groupEnd();
     
@@ -106,6 +186,38 @@ export class PayloadLogger {
     console.log('• Taille PDF:', payload.pdfSizeKB || 0, 'KB');
     console.log('• Signature présente:', !!payload.signature);
     console.groupEnd();
+    
+    console.groupEnd();
+  }
+  
+  // 🆕 NOUVELLE MÉTHODE: LOG AVANT ENVOI WEBHOOK
+  static logBeforeWebhookSend(payload: any): void {
+    console.group('🚀 DIAGNOSTIC FINAL AVANT ENVOI WEBHOOK N8N');
+    
+    // Payload complet
+    console.log('📦 PAYLOAD COMPLET À ENVOYER:', JSON.stringify(payload, null, 2));
+    
+    // Vérification finale des champs critiques
+    const webhookRequiredFields = ['clientEmail', 'clientPhone', 'totalHT', 'totalTTC', 'invoiceNumber', 'pdfBase64'];
+    const missingWebhookFields = webhookRequiredFields.filter(field => {
+      const value = payload[field];
+      return !value || value === '' || (Array.isArray(value) && value.length === 0);
+    });
+    
+    if (missingWebhookFields.length > 0) {
+      console.error('🚨 CHAMPS MANQUANTS POUR WEBHOOK:', missingWebhookFields);
+      console.error('⚠️ LE WEBHOOK N8N RISQUE DE PLANTER !');
+    } else {
+      console.log('✅ PAYLOAD PRÊT POUR ENVOI WEBHOOK');
+    }
+    
+    // Taille du payload
+    const payloadSize = JSON.stringify(payload).length;
+    console.log('📊 Taille totale payload:', payloadSize, 'caractères');
+    
+    if (payloadSize > 1000000) { // 1MB
+      console.warn('⚠️ PAYLOAD TRÈS VOLUMINEUX (>1MB) - RISQUE DE TIMEOUT');
+    }
     
     console.groupEnd();
   }
@@ -147,7 +259,21 @@ export class PayloadLogger {
 // 🧹 NETTOYEUR DE PAYLOAD
 export class PayloadSanitizer {
   static sanitizePayload(invoice: Invoice, pdfBase64: string, pdfSizeKB: number): ValidatedInvoicePayload {
-    console.log('🧹 NETTOYAGE ET PRÉPARATION DU PAYLOAD');
+    console.log('🧹 NETTOYAGE ET PRÉPARATION DU PAYLOAD - DIAGNOSTIC COMPLET');
+    
+    // 🔍 LOG DES DONNÉES BRUTES AVANT NETTOYAGE
+    console.group('📋 DONNÉES BRUTES AVANT NETTOYAGE');
+    console.log('Invoice brute:', {
+      invoiceNumber: invoice.invoiceNumber,
+      clientName: invoice.client.name,
+      clientEmail: invoice.client.email,
+      clientPhone: invoice.client.phone,
+      products: invoice.products.length,
+      paymentMethod: invoice.payment.method,
+      signature: !!invoice.signature
+    });
+    console.log('PDF info:', { base64Length: pdfBase64.length, sizeKB: pdfSizeKB });
+    console.groupEnd();
     
     // Calculer les totaux
     const products = invoice.products.map(product => {
@@ -171,6 +297,17 @@ export class PayloadSanitizer {
     const totalTVA = totalTTC - totalHT;
     const depositAmount = invoice.payment.depositAmount || 0;
     const remainingAmount = totalTTC - depositAmount;
+    
+    // 🔍 LOG DES CALCULS
+    console.group('🧮 CALCULS EFFECTUÉS');
+    console.log('Totaux calculés:', {
+      totalHT: Math.round(totalHT * 100) / 100,
+      totalTTC: Math.round(totalTTC * 100) / 100,
+      totalTVA: Math.round(totalTVA * 100) / 100,
+      depositAmount: Math.round(depositAmount * 100) / 100,
+      remainingAmount: Math.round(remainingAmount * 100) / 100
+    });
+    console.groupEnd();
     
     // Construire le payload nettoyé
     const cleanPayload = {
@@ -225,7 +362,11 @@ export class PayloadSanitizer {
       generatedTimestamp: Date.now()
     };
     
-    console.log('✅ Payload nettoyé et préparé');
+    // 🔍 LOG DU PAYLOAD NETTOYÉ
+    console.group('✅ PAYLOAD NETTOYÉ - PRÊT POUR VALIDATION');
+    console.log('Payload nettoyé:', JSON.stringify(cleanPayload, null, 2));
+    console.groupEnd();
+    
     return cleanPayload;
   }
 }

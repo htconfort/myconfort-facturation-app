@@ -20,7 +20,7 @@ export class N8nWebhookService {
     payload?: ValidatedInvoicePayload;
   }> {
     try {
-      console.log('🚀 ENVOI FACTURE VERS N8N AVEC VALIDATION COMPLÈTE');
+      console.log('🚀 DIAGNOSTIC COMPLET AVANT ENVOI N8N');
       
       // 1. Valider et préparer le payload
       const validation = PayloadValidator.validateAndPrepare(invoice, pdfBase64, pdfSizeKB);
@@ -37,20 +37,43 @@ export class N8nWebhookService {
       
       const validatedPayload = validation.payload!;
       
-      // 2. Log final avant envoi
-      console.group('📤 ENVOI VERS N8N');
-      console.log('🎯 URL:', this.WEBHOOK_URL);
+      // 2. 🎯 DIAGNOSTIC FINAL AVANT ENVOI (PRIORITÉ ABSOLUE)
+      PayloadLogger.logBeforeWebhookSend(validatedPayload);
+      
+      // 3. 🗺️ VÉRIFICATION MAPPING WEBHOOK
+      console.group('🗺️ MAPPING WEBHOOK N8N - VÉRIFICATION FINALE');
+      console.log('🎯 URL Webhook:', this.WEBHOOK_URL);
       console.log('📊 Taille payload:', JSON.stringify(validatedPayload).length, 'caractères');
-      console.log('📋 Payload final:', JSON.stringify(validatedPayload, null, 2));
+      
+      // Vérification du mapping des champs critiques pour n8n
+      const webhookMapping = {
+        'clientEmail → email': validatedPayload.clientEmail,
+        'clientPhone → phone': validatedPayload.clientPhone,
+        'totalHT → montantHT': validatedPayload.totalHT,
+        'totalTTC → montantTTC': validatedPayload.totalTTC,
+        'clientName → nom_client': validatedPayload.clientName,
+        'invoiceNumber → numero_facture': validatedPayload.invoiceNumber,
+        'pdfBase64 → fichier_facture': validatedPayload.pdfBase64 ? 'PDF_PRESENT' : 'PDF_MISSING',
+        'products → produits': validatedPayload.products?.length || 0
+      };
+      
+      Object.entries(webhookMapping).forEach(([mapping, value]) => {
+        const hasValue = value !== undefined && value !== null && value !== '';
+        console.log(`${hasValue ? '✅' : '❌'} ${mapping}:`, 
+          typeof value === 'string' && value.length > 30 ? `${value.substring(0, 30)}...` : value
+        );
+      });
       console.groupEnd();
       
-      // 3. Envoyer vers n8n avec timeout
+      // 4. Envoyer vers n8n avec timeout
       const controller = new AbortController();
       const timeoutId = setTimeout(() => {
         controller.abort();
       }, this.TIMEOUT_MS);
       
       try {
+        console.log('📤 ENVOI EN COURS VERS N8N...');
+        
         const response = await fetch(this.WEBHOOK_URL, {
           method: 'POST',
           headers: {
@@ -64,7 +87,7 @@ export class N8nWebhookService {
         
         clearTimeout(timeoutId);
         
-        // 4. Analyser la réponse
+        // 5. Analyser la réponse
         const responseText = await response.text();
         let responseData;
         
@@ -78,6 +101,14 @@ export class N8nWebhookService {
         console.log('🔢 Status:', response.status);
         console.log('📄 Headers:', Object.fromEntries(response.headers.entries()));
         console.log('📋 Body:', responseData);
+        
+        // Diagnostic de la réponse
+        if (response.ok) {
+          console.log('✅ WEBHOOK N8N A REÇU LE PAYLOAD AVEC SUCCÈS');
+        } else {
+          console.error('❌ WEBHOOK N8N A REJETÉ LE PAYLOAD');
+          console.error('🔍 Vérifiez le workflow n8n et les champs attendus');
+        }
         console.groupEnd();
         
         if (!response.ok) {
