@@ -14,9 +14,11 @@
     "file-saver": "^2.0.5",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.1",
+    "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.400.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "signature_pad": "^5.0.10"
   },
   "devDependencies": {
     "@types/file-saver": "^2.0.7",
