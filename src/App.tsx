@@ -9,6 +9,7 @@ import { ProductsListModal } from './components/ProductsListModal';
 import { PDFPreviewModal } from './components/PDFPreviewModal';
 import { PDFGuideModal } from './components/PDFGuideModal';
 import { GoogleDriveModal } from './components/GoogleDriveModal';
+import { PayloadDebugModal } from './components/PayloadDebugModal';
 import { SignaturePad } from './components/SignaturePad';
 import { InvoicePDF } from './components/InvoicePDF';
 import { Toast } from './components/ui/Toast';
@@ -17,6 +18,7 @@ import { generateInvoiceNumber } from './utils/calculations';
 import { saveClients, loadClients, saveDraft, loadDraft, saveClient, saveInvoice, loadInvoices, deleteInvoice } from './utils/storage';
 import { AdvancedPDFService } from './services/advancedPdfService'; // Keep this import
 import { GoogleDriveService } from './services/googleDriveService';
+import { N8nWebhookService } from './services/n8nWebhookService';
 // import { PDFService } from './services/pdfService'; // REMOVED: No longer needed, using AdvancedPDFService
 
 function App() {
@@ -58,6 +60,7 @@ function App() {
   const [showPDFPreview, setShowPDFPreview] = useState(false);
   const [showPDFGuide, setShowPDFGuide] = useState(false);
   const [showGoogleDriveConfig, setShowGoogleDriveConfig] = useState(false);
+  const [showPayloadDebug, setShowPayloadDebug] = useState(false);
   const [showSignaturePad, setShowSignaturePad] = useState(false);
   const [showInvoicePreview, setShowInvoicePreview] = useState(true);
   const [toast, setToast] = useState({
@@ -226,7 +229,7 @@ function App() {
     showToast('📤 Préparation de l\'envoi du PDF MYCONFORT...', 'success');
 
     try {
-      const pdfBlob = await generatePDFBlobFromPreview(); // Utilise AdvancedPDFService via generatePDFBlobFromPreview
+      const pdfBlob = await generatePDFBlobFromPreview();
       if (!pdfBlob) return;
 
       const base64Data = await new Promise<string>((resolve, reject) => {
@@ -236,28 +239,16 @@ function App() {
         reader.readAsDataURL(pdfBlob);
       });
 
-      showToast('🚀 Envoi vers N8N en cours...', 'success');
-      const webhookData = {
-        invoiceNumber: invoice.invoiceNumber,
-        clientName: invoice.client.name,
-        clientEmail: invoice.client.email,
-        advisorName: invoice.advisorName,
-        invoiceDate: invoice.invoiceDate,
-        totalAmount: invoice.products.reduce((sum, p) => p.quantity * p.priceTTC, 0), // Simplified total for webhook
-        fichier_facture: base64Data,
-        // Add any other relevant invoice data for your webhook
-      };
-      const response = await fetch('https://n8n.srv765811.hstgr.cloud/webhook/e7ca38d2-4b2a-4216-9c26-23663529790a', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(webhookData)
-      });
+      const pdfSizeKB = Math.round(pdfBlob.size / 1024);
+      showToast('🔐 Validation et envoi vers N8N...', 'success');
+      
+      // Utiliser le nouveau service avec validation
+      const result = await N8nWebhookService.sendInvoiceToN8n(invoice, base64Data, pdfSizeKB);
 
-      if (response.ok) {
-        showToast("✅ Facture envoyée par email (PDF joint) via N8N", "success");
+      if (result.success) {
+        showToast(result.message, "success");
       } else {
-        const errorText = await response.text();
-        throw new Error(`Erreur N8N: ${response.status} - ${errorText}`);
+        throw new Error(result.message);
       }
     } catch (error: any) {
       console.error('❌ Erreur envoi PDF via N8N:', error);
@@ -452,6 +443,7 @@ function App() {
         onShowInvoices={() => setShowInvoicesList(true)}
         onShowProducts={() => setShowProductsList(true)}
         onShowGoogleDrive={handleSendPDF}
+        onShowDebug={() => setShowPayloadDebug(true)}
       />
 
       <main className="container mx-auto px-4 py-6" id="invoice-content">
@@ -743,6 +735,14 @@ function App() {
       <GoogleDriveModal
         isOpen={showGoogleDriveConfig}
         onClose={() => setShowGoogleDriveConfig(false)}
+        onSuccess={handleEmailJSSuccess}
+        onError={handleEmailJSError}
+      />
+
+      <PayloadDebugModal
+        isOpen={showPayloadDebug}
+        onClose={() => setShowPayloadDebug(false)}
+        invoice={invoice}
         onSuccess={handleEmailJSSuccess}
         onError={handleEmailJSError}
       />

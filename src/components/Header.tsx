@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, Package, Building2, Archive, UploadCloud as CloudUpload } from 'lucide-react';
+import { Users, Package, Building2, Archive, UploadCloud as CloudUpload, Bug } from 'lucide-react';
 
 interface HeaderProps {
   onGeneratePDF: () => void;
@@ -7,6 +7,7 @@ interface HeaderProps {
   onShowInvoices: () => void;
   onShowProducts: () => void;
   onShowGoogleDrive: () => Promise<void>;
+  onShowDebug?: () => void;
   onScrollToClient?: () => void;
   onScrollToProducts?: () => void;
 }
@@ -16,7 +17,8 @@ export const Header: React.FC<HeaderProps> = ({
   onShowClients,
   onShowInvoices,
   onShowProducts,
-  onShowGoogleDrive
+  onShowGoogleDrive,
+  onShowDebug
 }) => {
   return (
     <header className="bg-gradient-to-r from-[#477A0C] to-[#5A8F0F] shadow-xl sticky top-0 z-40">
@@ -35,6 +37,17 @@ export const Header: React.FC<HeaderProps> = ({
         
         <div className="flex items-center space-x-2 md:space-x-4">
           {/* Actions principales */}
+          {onShowDebug && (
+            <button
+              onClick={onShowDebug}
+              className="bg-orange-500 hover:bg-orange-600 px-3 md:px-4 py-2 md:py-3 rounded-lg flex items-center space-x-2 font-bold shadow-md transition-all hover:scale-105 text-white"
+              title="Debug Payload N8N"
+            >
+              <Bug size={18} />
+              <span className="hidden md:inline">Debug</span>
+            </button>
+          )}
+          
           <button
             onClick={onShowProducts}
             className="bg-[#F2EFE2] hover:bg-white px-3 md:px-4 py-2 md:py-3 rounded-lg flex items-center space-x-2 font-bold shadow-md transition-all hover:scale-105 text-black"

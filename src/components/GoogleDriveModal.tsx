@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Save, UploadCloud as CloudUpload, TestTube, Loader, CheckCircle, AlertCircle, FolderOpen, Wifi, WifiOff } from 'lucide-react';
 import { Modal } from './ui/Modal';
 import { GoogleDriveService } from '../services/googleDriveService';
+import { N8nWebhookService } from '../services/n8nWebhookService';
 
 interface GoogleDriveModalProps {
   isOpen: boolean;
@@ -102,8 +103,8 @@ export const GoogleDriveModal: React.FC<GoogleDriveModalProps> = ({
     setTestResult(null);
 
     try {
-      // Test the Google Drive integration
-      const result = await GoogleDriveService.testGoogleDriveIntegration();
+      // Test the n8n webhook connection
+      const result = await N8nWebhookService.testConnection();
       setTestResult(result);
       
       if (result.success) {

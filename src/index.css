@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import des styles d'impression */
+@import './styles/print.css';
+
 /* Styles pour le template de facture basé sur l'exemple HTML fourni */
 .facture-apercu {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;

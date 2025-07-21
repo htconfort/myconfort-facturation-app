@@ -1,0 +1,292 @@
+/* 🖨️ STYLES D'IMPRESSION DÉDIÉS POUR MYCONFORT */
+
+@media print {
+  /* Reset général pour l'impression */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    font-family: 'Inter', Arial, sans-serif !important;
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+    color: #000 !important;
+  }
+  
+  /* Masquer les éléments non imprimables */
+  .no-print,
+  .no-print *,
+  button,
+  .btn,
+  nav,
+  .navigation,
+  .sidebar,
+  .modal,
+  .toast,
+  .tooltip,
+  .dropdown,
+  header,
+  footer,
+  .header,
+  .footer {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  
+  /* Page A4 exacte */
+  .invoice-page,
+  .facture-apercu,
+  .invoice-container {
+    width: 21cm !important;
+    min-height: 29.7cm !important;
+    max-width: 21cm !important;
+    margin: 0 auto !important;
+    padding: 1cm !important;
+    background: white !important;
+    box-shadow: none !important;
+    border: none !important;
+    page-break-after: always;
+  }
+  
+  /* Forcer l'affichage des éléments imprimables */
+  .print-only {
+    display: block !important;
+    visibility: visible !important;
+  }
+  
+  /* Styles pour les titres */
+  h1, h2, h3, h4, h5, h6 {
+    color: #477A0C !important;
+    page-break-after: avoid;
+    margin-top: 0 !important;
+  }
+  
+  /* Styles pour les tableaux */
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    page-break-inside: avoid;
+    margin: 10px 0 !important;
+  }
+  
+  table th {
+    background-color: #477A0C !important;
+    color: white !important;
+    padding: 8px !important;
+    border: 1px solid #333 !important;
+    font-weight: bold !important;
+  }
+  
+  table td {
+    padding: 6px 8px !important;
+    border: 1px solid #ddd !important;
+    vertical-align: top !important;
+  }
+  
+  table tr:nth-child(even) {
+    background-color: #f8f9fa !important;
+  }
+  
+  /* Éviter les coupures de page */
+  .no-page-break,
+  .signature-section,
+  .totals-section,
+  .client-info,
+  .company-info {
+    page-break-inside: avoid !important;
+  }
+  
+  /* Styles pour les sections importantes */
+  .section-header {
+    background-color: #477A0C !important;
+    color: white !important;
+    padding: 8px 12px !important;
+    margin: 15px 0 5px 0 !important;
+    font-weight: bold !important;
+    page-break-after: avoid;
+  }
+  
+  /* Styles pour la signature */
+  .signature-box {
+    border: 2px solid #477A0C !important;
+    padding: 10px !important;
+    margin: 15px 0 !important;
+    background: #f8f9fa !important;
+    page-break-inside: avoid !important;
+  }
+  
+  .signature-box img {
+    max-width: 200px !important;
+    max-height: 60px !important;
+  }
+  
+  /* Styles pour les totaux */
+  .totals-section {
+    background: #f8f9fa !important;
+    border: 1px solid #ddd !important;
+    padding: 15px !important;
+    margin: 20px 0 !important;
+    page-break-inside: avoid !important;
+  }
+  
+  .total-final {
+    background-color: #477A0C !important;
+    color: white !important;
+    padding: 10px !important;
+    font-weight: bold !important;
+    font-size: 16px !important;
+  }
+  
+  /* Styles pour les mentions légales */
+  .legal-notice {
+    background-color: #dc2626 !important;
+    color: white !important;
+    padding: 10px !important;
+    margin: 15px 0 !important;
+    border: 2px solid #dc2626 !important;
+    font-weight: bold !important;
+    page-break-inside: avoid !important;
+  }
+  
+  /* Styles pour les informations client */
+  .client-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 15px !important;
+    margin: 15px 0 !important;
+    page-break-inside: avoid !important;
+  }
+  
+  .client-field {
+    margin-bottom: 8px !important;
+  }
+  
+  .client-field .label {
+    font-weight: bold !important;
+    color: #477A0C !important;
+    font-size: 10px !important;
+    text-transform: uppercase !important;
+  }
+  
+  .client-field .value {
+    color: #000 !important;
+    font-size: 12px !important;
+    margin-top: 2px !important;
+  }
+  
+  /* Forcer les couleurs importantes */
+  .bg-green-600,
+  .bg-green-700,
+  .bg-\[#477A0C\] {
+    background-color: #477A0C !important;
+    color: white !important;
+  }
+  
+  .text-green-600,
+  .text-green-700,
+  .text-\[#477A0C\] {
+    color: #477A0C !important;
+  }
+  
+  .bg-red-600,
+  .bg-red-500 {
+    background-color: #dc2626 !important;
+    color: white !important;
+  }
+  
+  /* Optimisations pour l'impression */
+  img {
+    max-width: 100% !important;
+    height: auto !important;
+    page-break-inside: avoid !important;
+  }
+  
+  /* Éviter les lignes orphelines */
+  p, li {
+    orphans: 3;
+    widows: 3;
+  }
+  
+  /* Styles pour les codes et montants */
+  .font-mono,
+  code {
+    font-family: 'Courier New', monospace !important;
+    background: #f1f1f1 !important;
+    padding: 2px 4px !important;
+    border-radius: 3px !important;
+  }
+  
+  /* Styles pour les badges de statut */
+  .status-badge {
+    border: 1px solid #333 !important;
+    padding: 4px 8px !important;
+    border-radius: 4px !important;
+    font-size: 10px !important;
+    font-weight: bold !important;
+  }
+  
+  /* Masquer les scrollbars */
+  ::-webkit-scrollbar {
+    display: none !important;
+  }
+  
+  /* Configuration de page */
+  @page {
+    size: A4;
+    margin: 1cm;
+    
+    @top-center {
+      content: "MYCONFORT - Facture";
+      font-size: 10px;
+      color: #666;
+    }
+    
+    @bottom-center {
+      content: "Page " counter(page) " sur " counter(pages);
+      font-size: 10px;
+      color: #666;
+    }
+  }
+  
+  /* Première page sans en-tête */
+  @page :first {
+    @top-center {
+      content: none;
+    }
+  }
+  
+  /* Forcer les sauts de page appropriés */
+  .page-break-before {
+    page-break-before: always !important;
+  }
+  
+  .page-break-after {
+    page-break-after: always !important;
+  }
+  
+  .page-break-avoid {
+    page-break-inside: avoid !important;
+  }
+}
+
+/* 📱 STYLES POUR L'APERÇU AVANT IMPRESSION */
+@media screen {
+  .print-preview {
+    background: #f5f5f5;
+    padding: 20px;
+  }
+  
+  .print-preview .invoice-page {
+    background: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 0 auto 20px auto;
+    width: 21cm;
+    min-height: 29.7cm;
+    padding: 1cm;
+  }
+}
