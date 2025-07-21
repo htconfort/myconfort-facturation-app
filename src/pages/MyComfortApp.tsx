@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from "react";
-import jsPDF from "jspdf";
-import { Save, Download, Cloud, CloudOff } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { Save, Download, Cloud, CloudOff, Send, Loader } from "lucide-react";
 import { initializeEmailJS } from '../utils/emailService';
 import { createHTConfortInvoice, testHTConfortInvoice, SimpleClient, SimpleItem } from '../utils/invoiceGenerator';
 import { supabase } from '../utils/supabaseClient';
 import { clientService, invoiceService, productService, testSupabaseConnection } from '../utils/supabaseService';
 import type { Client, Invoice as SupabaseInvoice, Product } from '../utils/supabaseService';
-
-// Import des utilitaires PDF
-import { downloadPDF as generatePDF } from '../utils/pdfGenerator';
-import { Invoice } from '../utils/data';
+import { Invoice } from '../types'; // Import the full Invoice type
+import { InvoicePDF } from '../components/InvoicePDF'; // Import the InvoicePDF component
+import { PDFService } from '../services/pdfService'; // Import PDFService
+import { prepareInvoicePayload, sendInvoice } from '../services/invoiceApiService'; // Import API service
+import { saveAs } from 'file-saver'; // For downloading PDF
 
 // Déclaration pour html2canvas (déjà inclus via CDN)
 declare global {
@@ -17,9 +17,6 @@ declare global {
     html2canvas: any;
   }
 }
-
-// n8n Webhook URL (PROD)
-const N8N_WEBHOOK_URL = 'https://n8n.srv765811.hstgr.cloud/webhook-test/e7ca38d2-4b2a-4216-9c26-23663529790a';
 
 export default function MyComfortApp() {
   // === Formulaire client ===
@@ -31,6 +28,8 @@ export default function MyComfortApp() {
     telephone: "",
     email: "",
     siret: "",
+    housingType: "", // New field
+    doorCode: "",    // New field
   });
 
   // === Bibliothèque produits ===
@@ -54,7 +53,27 @@ export default function MyComfortApp() {
   const [tailleSel, setTailleSel] = useState("");
   const [qteSel, setQteSel] = useState(1);
   const [produitTrouve, setProduitTrouve] = useState(null);
-  const [produits, setProduits] = useState([]);
+  const [produits, setProduits] = useState<any[]>([]); // Update to any[] for now, will map to Product type
+
+  // === Nouveaux états pour la facture complète ===
+  const invoicePdfRef = useRef<HTMLDivElement>(null); // Ref for InvoicePDF component
+
+  const [invoiceNumber, setInvoiceNumber] = useState(`FAC-${Date.now().toString().slice(-6)}`);
+  const [invoiceDate, setInvoiceDate] = useState(new Date().toISOString().split('T')[0]); // YYYY-MM-DD
+  const [eventLocation, setEventLocation] = useState('Foire de Paris');
+  const [advisorName, setAdvisorName] = useState('Bruno Priem');
+  const [invoiceNotes, setInvoiceNotes] = useState('');
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [taxRate, setTaxRate] = useState(20); // Default TVA 20%
+  const [deliveryMethod, setDeliveryMethod] = useState('Standard');
+  const [deliveryNotes, setDeliveryNotes] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('Virement');
+  const [depositAmount, setDepositAmount] = useState(0);
+  const [isSigned, setIsSigned] = useState(false);
+  const [signatureImage, setSignatureImage] = useState('https://i.imgur.com/2Q9Q9Q9.png'); // Placeholder signature image
+  const [descriptionTravaux, setDescriptionTravaux] = useState('');
+  const [dueDate, setDueDate] = useState(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]); // 7 days from now
+  const [invoiceStatus, setInvoiceStatus] = useState('draft');
 
   // État de connexion Google Drive
   const [isGoogleConnected, setIsGoogleConnected] = useState(false);
@@ -67,6 +86,10 @@ export default function MyComfortApp() {
   const [supabaseProducts, setSupabaseProducts] = useState<Product[]>([]);
   const [isSaving, setIsSaving] = useState(false); // New state for saving
   const [isDownloadingPDF, setIsDownloadingPDF] = useState(false); // New state for PDF download
+  const [isSendingToN8N, setIsSendingToN8N] = useState(false); // New state for n8n sending
+
+  // n8n Webhook URL (CRITICAL: Replace with your actual n8n webhook URL)
+  const N8N_WEBHOOK_URL = 'https://your-n8n-webhook-url.com/invoice-data';
 
   // Initialiser EmailJS au chargement
   useEffect(() => {
@@ -145,6 +168,52 @@ export default function MyComfortApp() {
 
   const total = produits.reduce((acc, p) => acc + p.prix * p.quantite, 0);
 
+  // Function to get the full Invoice object from state
+  const getInvoiceDataForPayload = (): Invoice => {
+    return {
+      invoiceNumber: invoiceNumber,
+      invoiceDate: invoiceDate,
+      eventLocation: eventLocation,
+      advisorName: advisorName,
+      invoiceNotes: invoiceNotes,
+      termsAccepted: termsAccepted,
+      taxRate: taxRate,
+      client: {
+        name: client.nom,
+        address: client.adresse,
+        postalCode: client.codePostal,
+        city: client.ville,
+        phone: client.telephone,
+        email: client.email,
+        siret: client.siret,
+        housingType: client.housingType,
+        doorCode: client.doorCode,
+      },
+      delivery: {
+        method: deliveryMethod,
+        notes: deliveryNotes,
+      },
+      payment: {
+        method: paymentMethod,
+        depositAmount: depositAmount,
+      },
+      products: produits.map(p => ({
+        name: p.nom,
+        category: p.categorie, // Assuming 'categorie' is available in `produits`
+        quantity: p.quantite,
+        unitPrice: p.prix / (1 + (taxRate / 100)), // Derive HT from TTC
+        priceTTC: p.prix,
+        discount: p.discount || 0, // Default to 0 if not set
+        discountType: p.discountType || 'amount', // Default to 'amount' if not set
+      })),
+      description_travaux: descriptionTravaux,
+      isSigned: isSigned,
+      signature: signatureImage,
+      dueDate: dueDate,
+      status: invoiceStatus,
+    };
+  };
+
   // Fonctions de sauvegarde et PDF
   const saveToSupabase = async () => {
     if (!isSupabaseConnected) {
@@ -215,24 +284,20 @@ export default function MyComfortApp() {
   };
 
   const downloadPDF = async () => {
-    setIsDownloadingPDF(true); // Set downloading state to true
+    setIsDownloadingPDF(true);
     try {
-      const doc = new jsPDF();
-      doc.text(`Facture MyConfort\nClient : ${client.nom || "-"}\nDate : ${new Date().toLocaleDateString('fr-FR')}\nTotal : ${total}€`, 10, 10);
-      produits.forEach((p, i) => {
-        doc.text(
-          `${i + 1}. ${p.nom} (${p.taille}) x${p.quantite} = ${p.prix * p.quantite}€`,
-          10,
-          25 + i * 10
-        );
-      });
-      doc.save(`Facture-${client.nom || "client"}.pdf`);
+      if (!invoicePdfRef.current) {
+        throw new Error("Invoice PDF preview element not found.");
+      }
+      const fullInvoice = getInvoiceDataForPayload();
+      const pdfBlob = await PDFService.generateInvoicePDF(fullInvoice, invoicePdfRef);
+      saveAs(pdfBlob, `Facture-${fullInvoice.client.name || "client"}-${fullInvoice.invoiceNumber}.pdf`);
       alert("✅ PDF téléchargé avec succès !");
     } catch (error) {
       console.error('❌ Erreur téléchargement PDF:', error);
       alert(`❌ Erreur lors du téléchargement du PDF: ${error.message}`);
     } finally {
-      setIsDownloadingPDF(false); // Set downloading state to false
+      setIsDownloadingPDF(false);
     }
   };
 
@@ -277,35 +342,18 @@ export default function MyComfortApp() {
       alert("📧 Envoi de la facture par email...");
       
       // Créer la facture avec la nouvelle méthode
-      const facture = createInvoiceFromForm();
+      const facture = createInvoiceFromForm(); // This is the old simple invoice, not the full one
       if (!facture) return;
       
       console.log('📧 Envoi facture:', facture.invoiceNumber);
       
       const { sendPDFByEmail } = await import('../utils/emailService');
       
-      // Créer l'objet facture
-      const invoice = {
-        id: `FAC-${Date.now()}`,
-        invoiceNumber: `FAC-${Date.now().toString().slice(-6)}`,
-        date: new Date().toLocaleDateString('fr-FR'),
-        clientName: client.nom,
-        clientAddress: `${client.adresse}\n${client.ville} ${client.codePostal}`,
-        clientPhone: client.telephone,
-        clientEmail: client.email,
-        items: produits.map(p => ({
-          description: `${p.nom} (${p.taille})`,
-          quantity: p.quantite,
-          unitPrice: p.prix,
-          total: p.prix * p.quantite
-        })),
-        subtotal: total / 1.2,
-        tax: total - (total / 1.2),
-        total: total
-      };
-      
-      // Envoyer par email
-      const success = await sendPDFByEmail(facture, client.email);
+      // Use the full invoice object for PDF generation
+      const fullInvoice = getInvoiceDataForPayload();
+
+      // Send by email using the updated service (assuming it uses PDFService internally)
+      const success = await sendPDFByEmail(fullInvoice, client.email, invoicePdfRef); // Pass ref to emailService
       
       if (success) {
         alert(`✅ Facture envoyée par email à ${client.email} !`);
@@ -486,17 +534,17 @@ export default function MyComfortApp() {
         throw new Error("html2canvas non disponible");
       }
       
-      const factureElement = createInvoiceElement();
-      document.body.appendChild(factureElement);
-      
-      const canvas = await window.html2canvas(factureElement, {
+      // Use the InvoicePDF component for rendering
+      if (!invoicePdfRef.current) {
+        throw new Error("Invoice PDF preview element not found for PNG generation.");
+      }
+
+      const canvas = await window.html2canvas(invoicePdfRef.current, {
         backgroundColor: '#ffffff',
         scale: 2,
         useCORS: true,
         allowTaint: true
       });
-      
-      document.body.removeChild(factureElement);
       
       return new Promise((resolve) => {
         canvas.toBlob(resolve, 'image/png', 0.95);
@@ -543,88 +591,32 @@ export default function MyComfortApp() {
     }
   };
 
-  // Fonction pour créer l'élément HTML de la facture
-  const createInvoiceElement = () => {
-    const factureDiv = document.createElement('div');
-    factureDiv.style.cssText = `
-      position: absolute;
-      top: -9999px;
-      left: -9999px;
-      width: 800px;
-      background: white;
-      padding: 40px;
-      font-family: Arial, sans-serif;
-      color: #333;
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
-    `;
+  // New function to send invoice data to n8n
+  const handleSendInvoiceToN8N = async () => {
+    setIsSendingToN8N(true);
+    try {
+      if (!invoicePdfRef.current) {
+        throw new Error("Invoice PDF preview element not found for n8n payload.");
+      }
 
-    factureDiv.innerHTML = `
-      <div style="text-align: center; margin-bottom: 30px;">
-        <h1 style="color: #477A0C; font-size: 36px; margin: 0;">MYCOMFORT</h1>
-        <p style="color: #666; margin: 5px 0;">Solutions de confort</p>
-        <h2 style="color: #477A0C; font-size: 28px; margin: 20px 0;">FACTURE</h2>
-      </div>
+      const fullInvoice = getInvoiceDataForPayload();
+      
+      // 1. Generate PDF Blob
+      const pdfBlob = await PDFService.generateInvoicePDF(fullInvoice, invoicePdfRef);
 
-      <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
-        <div>
-          <h3 style="color: #477A0C; border-bottom: 2px solid #477A0C; padding-bottom: 5px;">ÉMETTEUR</h3>
-          <p><strong>MyComfort SARL</strong></p>
-          <p>123 Rue de la Paix</p>
-          <p>75001 Paris</p>
-          <p>Tél: 01 23 45 67 89</p>
-          <p>Email: contact@mycomfort.fr</p>
-        </div>
-        <div>
-          <h3 style="color: #477A0C; border-bottom: 2px solid #477A0C; padding-bottom: 5px;">FACTURÉ À</h3>
-          <p><strong>${client.nom || "Client"}</strong></p>
-          <p>${client.adresse || ""}</p>
-          <p>${client.ville || ""} ${client.codePostal || ""}</p>
-          <p>Tél: ${client.telephone || ""}</p>
-          <p>Email: ${client.email || ""}</p>
-        </div>
-      </div>
+      // 2. Prepare JSON payload with base64 PDF
+      const payload = await prepareInvoicePayload(fullInvoice, pdfBlob);
 
-      <div style="margin-bottom: 20px;">
-        <p><strong>Date:</strong> ${new Date().toLocaleDateString('fr-FR')}</p>
-        <p><strong>Facture N°:</strong> FAC-${Date.now().toString().slice(-6)}</p>
-      </div>
+      // 3. Send payload to n8n webhook
+      await sendInvoice(payload, N8N_WEBHOOK_URL);
 
-      <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
-        <thead>
-          <tr style="background: #477A0C; color: white;">
-            <th style="border: 1px solid #477A0C; padding: 12px; text-align: left;">Description</th>
-            <th style="border: 1px solid #477A0C; padding: 12px; text-align: center;">Qté</th>
-            <th style="border: 1px solid #477A0C; padding: 12px; text-align: right;">Prix unitaire</th>
-            <th style="border: 1px solid #477A0C; padding: 12px; text-align: right;">Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${produits.map((p, i) => `
-            <tr style="background: ${i % 2 === 0 ? '#f9f9f9' : 'white'};">
-              <td style="border: 1px solid #ddd; padding: 10px;">${p.nom} (${p.taille})</td>
-              <td style="border: 1px solid #ddd; padding: 10px; text-align: center;">${p.quantite}</td>
-              <td style="border: 1px solid #ddd; padding: 10px; text-align: right;">${p.prix}€</td>
-              <td style="border: 1px solid #ddd; padding: 10px; text-align: right; font-weight: bold;">${p.prix * p.quantite}€</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-
-      <div style="text-align: right; margin-bottom: 30px;">
-        <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; display: inline-block; min-width: 300px;">
-          <p style="margin: 5px 0;"><strong>Sous-total HT:</strong> ${(total / 1.2).toFixed(2)}€</p>
-          <p style="margin: 5px 0;"><strong>TVA (20%):</strong> ${(total - total / 1.2).toFixed(2)}€</p>
-          <p style="margin: 15px 0 0 0; font-size: 18px; color: #477A0C;"><strong>TOTAL TTC: ${total}€</strong></p>
-        </div>
-      </div>
-
-      <div style="text-align: center; border-top: 1px solid #ddd; padding-top: 20px; color: #666; font-size: 12px;">
-        <p>Facture acquittée - Merci de votre confiance</p>
-        <p>SIRET: 123 456 789 00012 - TVA non applicable, art. 293 B du CGI</p>
-      </div>
-    `;
-
-    return factureDiv;
+      alert('✅ Facture envoyée à n8n avec succès !');
+    } catch (error: any) {
+      console.error('❌ Erreur lors de l\'envoi à n8n:', error);
+      alert(`❌ Échec de l'envoi à n8n: ${error.message || 'Erreur inconnue'}`);
+    } finally {
+      setIsSendingToN8N(false);
+    }
   };
 
   return (
@@ -696,6 +688,196 @@ export default function MyComfortApp() {
               onChange={e => setClient({ ...client, siret: e.target.value })}
             />
           </div>
+          <div>
+            <label className="block font-medium mb-1">Type de logement</label>
+            <input
+              className="border rounded px-3 py-2 w-full"
+              type="text"
+              value={client.housingType}
+              onChange={e => setClient({ ...client, housingType: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="block font-medium mb-1">Code d'accès porte</label>
+            <input
+              className="border rounded px-3 py-2 w-full"
+              type="text"
+              value={client.doorCode}
+              onChange={e => setClient({ ...client, doorCode: e.target.value })}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* INFORMATIONS FACTURE COMPLÉMENTAIRES */}
+      <div className="bg-white rounded-xl shadow p-7 mb-6 border">
+        <h2 className="text-2xl font-bold mb-5 text-[#477A0C]">DÉTAILS DE LA FACTURE</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block font-medium mb-1">Numéro de Facture</label>
+            <input
+              className="border rounded px-3 py-2 w-full bg-gray-100"
+              type="text"
+              value={invoiceNumber}
+              onChange={e => setInvoiceNumber(e.target.value)}
+              readOnly
+            />
+          </div>
+          <div>
+            <label className="block font-medium mb-1">Date de Facture</label>
+            <input
+              className="border rounded px-3 py-2 w-full"
+              type="date"
+              value={invoiceDate}
+              onChange={e => setInvoiceDate(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block font-medium mb-1">Lieu de l'événement</label>
+            <input
+              className="border rounded px-3 py-2 w-full"
+              type="text"
+              value={eventLocation}
+              onChange={e => setEventLocation(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block font-medium mb-1">Nom du conseiller</label>
+            <input
+              className="border rounded px-3 py-2 w-full"
+              type="text"
+              value={advisorName}
+              onChange={e => setAdvisorName(e.target.value)}
+            />
+          </div>
+          <div className="md:col-span-2">
+            <label className="block font-medium mb-1">Description des travaux</label>
+            <textarea
+              className="border rounded px-3 py-2 w-full"
+              rows={3}
+              value={descriptionTravaux}
+              onChange={e => setDescriptionTravaux(e.target.value)}
+            ></textarea>
+          </div>
+          <div>
+            <label className="block font-medium mb-1">Date d'échéance</label>
+            <input
+              className="border rounded px-3 py-2 w-full"
+              type="date"
+              value={dueDate}
+              onChange={e => setDueDate(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block font-medium mb-1">Statut de la facture</label>
+            <select
+              className="border rounded px-3 py-2 w-full"
+              value={invoiceStatus}
+              onChange={e => setInvoiceStatus(e.target.value)}
+            >
+              <option value="draft">Brouillon</option>
+              <option value="sent">Envoyée</option>
+              <option value="paid">Payée</option>
+              <option value="cancelled">Annulée</option>
+            </select>
+          </div>
+          <div className="md:col-span-2">
+            <label className="block font-medium mb-1">Notes de facture</label>
+            <textarea
+              className="border rounded px-3 py-2 w-full"
+              rows={3}
+              value={invoiceNotes}
+              onChange={e => setInvoiceNotes(e.target.value)}
+            ></textarea>
+          </div>
+          <div>
+            <label className="block font-medium mb-1">Taux de TVA (%)</label>
+            <input
+              className="border rounded px-3 py-2 w-full"
+              type="number"
+              value={taxRate}
+              onChange={e => setTaxRate(Number(e.target.value))}
+            />
+          </div>
+          <div className="flex items-center mt-4">
+            <input
+              type="checkbox"
+              id="termsAccepted"
+              checked={termsAccepted}
+              onChange={e => setTermsAccepted(e.target.checked)}
+              className="mr-2"
+            />
+            <label htmlFor="termsAccepted" className="font-medium">Conditions générales acceptées</label>
+          </div>
+          <div className="flex items-center mt-4">
+            <input
+              type="checkbox"
+              id="isSigned"
+              checked={isSigned}
+              onChange={e => setIsSigned(e.target.checked)}
+              className="mr-2"
+            />
+            <label htmlFor="isSigned" className="font-medium">Facture signée</label>
+          </div>
+          {isSigned && (
+            <div>
+              <label className="block font-medium mb-1">URL Image Signature</label>
+              <input
+                className="border rounded px-3 py-2 w-full"
+                type="text"
+                value={signatureImage}
+                onChange={e => setSignatureImage(e.target.value)}
+              />
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* INFORMATIONS LIVRAISON & PAIEMENT */}
+      <div className="bg-white rounded-xl shadow p-7 mb-6 border">
+        <h2 className="text-2xl font-bold mb-5 text-[#477A0C]">LIVRAISON & PAIEMENT</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block font-medium mb-1">Méthode de livraison</label>
+            <input
+              className="border rounded px-3 py-2 w-full"
+              type="text"
+              value={deliveryMethod}
+              onChange={e => setDeliveryMethod(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block font-medium mb-1">Notes de livraison</label>
+            <input
+              className="border rounded px-3 py-2 w-full"
+              type="text"
+              value={deliveryNotes}
+              onChange={e => setDeliveryNotes(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block font-medium mb-1">Méthode de paiement</label>
+            <select
+              className="border rounded px-3 py-2 w-full"
+              value={paymentMethod}
+              onChange={e => setPaymentMethod(e.target.value)}
+            >
+              <option value="Virement">Virement</option>
+              <option value="Carte Bancaire">Carte Bancaire</option>
+              <option value="Espèces">Espèces</option>
+              <option value="Chèque">Chèque</option>
+              <option value="Acompte">Acompte</option>
+            </select>
+          </div>
+          <div>
+            <label className="block font-medium mb-1">Montant de l'acompte</label>
+            <input
+              className="border rounded px-3 py-2 w-full"
+              type="number"
+              value={depositAmount}
+              onChange={e => setDepositAmount(Number(e.target.value))}
+            />
+          </div>
         </div>
       </div>
 
@@ -761,7 +943,12 @@ export default function MyComfortApp() {
               if (produitTrouve) {
                 setProduits([
                   ...produits,
-                  { ...produitTrouve, quantite: qteSel }
+                  { 
+                    ...produitTrouve, 
+                    quantite: qteSel,
+                    discount: 0, // Default discount
+                    discountType: 'amount' // Default discount type
+                  }
                 ]);
               }
             }}
@@ -873,7 +1060,7 @@ export default function MyComfortApp() {
           </div>
 
           {/* Boutons d'action principaux */}
-          <div className="flex gap-3">
+          <div className="flex gap-3 flex-wrap justify-center">
             <button
               className={`px-6 py-2 rounded font-bold flex items-center gap-2 transition-colors ${
                 isSupabaseConnected && !isSaving // Add isSaving to disabled
@@ -927,6 +1114,27 @@ export default function MyComfortApp() {
             >
               ☁️ Sauver PNG
             </button>
+            <button
+              className={`px-6 py-2 rounded font-bold flex items-center gap-2 transition-colors ${
+                isSendingToN8N
+                  ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                  : 'bg-purple-700 hover:bg-purple-800 text-white'
+              }`}
+              onClick={handleSendInvoiceToN8N}
+              disabled={!client.nom || produits.length === 0 || isSendingToN8N}
+            >
+              {isSendingToN8N ? (
+                <>
+                  <Loader className="w-4 h-4 animate-spin" />
+                  <span>Envoi n8n...</span>
+                </>
+              ) : (
+                <>
+                  <Send className="w-4 h-4" />
+                  <span>🚀 Envoyer à n8n</span>
+                </>
+              )}
+            </button>
           </div>
         </div>
       </div>
@@ -969,6 +1177,11 @@ export default function MyComfortApp() {
         }`}>
           {isSupabaseConnected ? '✅ Supabase connecté' : '❌ Supabase déconnecté'}
         </div>
+      </div>
+
+      {/* Hidden InvoicePDF component for PDF generation */}
+      <div style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
+        <InvoicePDF invoice={getInvoiceDataForPayload()} ref={invoicePdfRef} />
       </div>
     </div>
   );

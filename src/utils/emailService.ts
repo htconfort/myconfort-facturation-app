@@ -1,170 +1,62 @@
 import emailjs from '@emailjs/browser';
-import { Invoice } from './invoiceStorage';
-import { getPDFBlob } from './pdfGenerator';
+import { Invoice } from '../types';
+import { PDFService } from '../services/pdfService'; // Import PDFService
 
-// Configuration EmailJS (à personnaliser avec vos clés)
-const EMAILJS_CONFIG = {
-  SERVICE_ID: 'service_ymw6jih',
-  TEMPLATE_ID: 'template_yng4k8s',
-  PUBLIC_KEY: 'A--fD137SFPmUMUUvjz2m'
+// Initialisation d'EmailJS
+export const initializeEmailJS = () => {
+  emailjs.init("YOUR_EMAILJS_PUBLIC_KEY"); // Remplacez par votre clé publique EmailJS
+  console.log("EmailJS initialisé.");
 };
 
-// Interface pour les paramètres d'email
-interface EmailParams {
-  to_email: string;
-  to_name: string;
-  invoice_number: string;
-  invoice_date: string;
-  total_amount: string;
-  company_name: string;
-  message?: string;
-}
-
-// Fonction principale d'envoi de PDF par email
+// Fonction pour envoyer le PDF par email
 export const sendPDFByEmail = async (
   invoice: Invoice, 
-  recipientEmail?: string,
-  customMessage?: string
+  recipientEmail: string, 
+  invoicePdfRef: React.RefObject<HTMLDivElement> // Pass the ref here
 ): Promise<boolean> => {
   try {
-    console.log('📧 Préparation de l\'envoi email pour:', invoice.invoiceNumber);
-    
-    // Générer le PDF
-    const pdfBlob = await getPDFBlob(invoice);
-    
-    // Préparer les paramètres de l'email
-    const emailParams: EmailParams = {
-      to_email: recipientEmail || invoice.clientEmail || '',
-      to_name: invoice.clientName,
-      invoice_number: invoice.invoiceNumber,
-      invoice_date: invoice.date,
-      total_amount: `${invoice.total.toFixed(2)} €`,
-      company_name: 'MyComfort',
-      message: customMessage || `Veuillez trouver ci-joint votre facture ${invoice.invoiceNumber}.`
-    };
-
-    // Vérifier que l'email destinataire existe
-    if (!emailParams.to_email) {
-      throw new Error('Adresse email du client manquante');
+    if (!invoicePdfRef.current) {
+      throw new Error("Invoice PDF preview element not found for email generation.");
     }
 
-    // Convertir le PDF en base64 pour l'envoi
-    const pdfBase64 = await blobToBase64(pdfBlob);
-    
-    // Ajouter le PDF aux paramètres
-    const emailParamsWithPDF = {
-      ...emailParams,
-      pdf_attachment: pdfBase64,
-      pdf_filename: `Facture_${invoice.invoiceNumber}_${invoice.clientName.replace(/\s+/g, '_')}.pdf`
-    };
+    // Générer le PDF en tant que Blob
+    const pdfBlob = await PDFService.generateInvoicePDF(invoice, invoicePdfRef);
 
-    // Envoyer l'email via EmailJS
-    const response = await emailjs.send(
-      EMAILJS_CONFIG.SERVICE_ID,
-      EMAILJS_CONFIG.TEMPLATE_ID,
-      emailParamsWithPDF,
-      EMAILJS_CONFIG.PUBLIC_KEY
-    );
-
-    console.log('✅ Email envoyé avec succès:', response);
-    return true;
-
-  } catch (error) {
-    console.error('❌ Erreur lors de l\'envoi email:', error);
-    throw error;
-  }
-};
-
-// Fonction pour envoyer un email simple sans PDF
-export const sendSimpleEmail = async (
-  invoice: Invoice,
-  recipientEmail?: string,
-  customMessage?: string
-): Promise<boolean> => {
-  try {
-    const emailParams: EmailParams = {
-      to_email: recipientEmail || invoice.clientEmail || '',
-      to_name: invoice.clientName,
-      invoice_number: invoice.invoiceNumber,
-      invoice_date: invoice.date,
-      total_amount: `${invoice.total.toFixed(2)} €`,
-      company_name: 'MyComfort',
-      message: customMessage || `Votre facture ${invoice.invoiceNumber} est disponible.`
-    };
-
-    if (!emailParams.to_email) {
-      throw new Error('Adresse email du client manquante');
-    }
-
-    const response = await emailjs.send(
-      EMAILJS_CONFIG.SERVICE_ID,
-      EMAILJS_CONFIG.TEMPLATE_ID,
-      emailParams,
-      EMAILJS_CONFIG.PUBLIC_KEY
-    );
-
-    console.log('✅ Email simple envoyé:', response);
-    return true;
-
-  } catch (error) {
-    console.error('❌ Erreur envoi email simple:', error);
-    throw error;
-  }
-};
-
-// Fonction utilitaire pour convertir Blob en Base64
-const blobToBase64 = (blob: Blob): Promise<string> => {
-  return new Promise((resolve, reject) => {
+    // Convertir le Blob en Base64
     const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result as string;
-      // Retirer le préfixe data:application/pdf;base64,
-      const base64 = result.split(',')[1];
-      resolve(base64);
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(blob);
-  });
-};
+    reader.readAsDataURL(pdfBlob);
 
-// Fonction pour initialiser EmailJS (à appeler au démarrage de l'app)
-export const initializeEmailJS = () => {
-  try {
-    emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
-    console.log('✅ EmailJS initialisé');
+    return new Promise((resolve, reject) => {
+      reader.onloadend = async () => {
+        const base64Pdf = reader.result as string;
+        
+        const templateParams = {
+          to_email: recipientEmail,
+          from_name: "MYCONFORT",
+          message: `Bonjour ${invoice.client.name},\n\nVeuillez trouver ci-joint votre facture MYCONFORT n°${invoice.invoiceNumber}.\n\nCordialement,\nL'équipe MYCONFORT`,
+          invoice_number: invoice.invoiceNumber,
+          client_name: invoice.client.name,
+          invoice_date: invoice.invoiceDate,
+          total_amount: invoice.montant_ttc?.toFixed(2) || invoice.products.reduce((sum, p) => sum + p.priceTTC * p.quantity, 0).toFixed(2),
+          pdf_attachment: base64Pdf.split(',')[1], // Remove data:application/pdf;base64, prefix
+        };
+
+        try {
+          await emailjs.send("YOUR_EMAILJS_SERVICE_ID", "YOUR_EMAILJS_TEMPLATE_ID", templateParams); // Remplacez par vos IDs
+          console.log("Email envoyé avec succès !");
+          resolve(true);
+        } catch (error) {
+          console.error("Erreur lors de l'envoi de l'email:", error);
+          reject(false);
+        }
+      };
+      reader.onerror = (error) => {
+        console.error("Erreur lors de la lecture du Blob:", error);
+        reject(false);
+      };
+    });
   } catch (error) {
-    console.error('❌ Erreur initialisation EmailJS:', error);
-  }
-};
-
-// Fonction pour tester la configuration EmailJS
-export const testEmailConfiguration = async (): Promise<boolean> => {
-  try {
-    const testParams = {
-      to_email: 'test@example.com',
-      to_name: 'Test Client',
-      invoice_number: 'TEST-001',
-      invoice_date: new Date().toLocaleDateString('fr-FR'),
-      total_amount: '100.00 €',
-      company_name: 'MyComfort',
-      message: 'Ceci est un test de configuration EmailJS'
-    };
-
-    await emailjs.send(
-      EMAILJS_CONFIG.SERVICE_ID,
-      EMAILJS_CONFIG.TEMPLATE_ID,
-      testParams,
-      EMAILJS_CONFIG.PUBLIC_KEY
-    );
-
-    console.log('✅ Test EmailJS réussi');
-    return true;
-
-  } catch (error) {
-    console.error('❌ Test EmailJS échoué:', error);
+    console.error("Erreur lors de la préparation de l'email:", error);
     return false;
   }
 };
-
-// Export des constantes de configuration pour modification
-export { EMAILJS_CONFIG };

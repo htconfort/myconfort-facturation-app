@@ -21,7 +21,7 @@ export interface Product {
   unitPrice: number;
   priceTTC: number;
   discount: number;
-  discountType: 'percent' | 'fixed';
+  discountType: 'percentage' | 'amount'; // Mis à jour pour correspondre au JSON de l'utilisateur
   autoCalculateHT?: boolean;
 }
 
@@ -48,14 +48,21 @@ export interface Invoice {
   invoiceDate: string;
   eventLocation: string;
   advisorName: string;
-  invoiceNotes: string;
+  invoiceNotes: string; // Mappe à 'notes' dans le JSON
   termsAccepted: boolean;
-  taxRate: number;
+  taxRate: number; // Mappe à 'tva' dans le JSON
   client: Client;
   delivery: DeliveryInfo;
   payment: PaymentInfo;
   products: Product[];
-  signature?: string;
+  signature?: string; // Pour l'URL de l'image de signature
+  isSigned: boolean; // Nouveau champ pour le statut booléen de la signature
+  montant_ht?: number; // Nouveau champ, sera calculé
+  montant_ttc?: number; // Nouveau champ, sera calculé
+  description_travaux: string; // Nouveau champ
+  fichier_facture?: string; // Nouveau champ pour le PDF en base64
+  dueDate?: string; // Nouveau champ pour 'date_echeance'
+  status?: string; // Nouveau champ pour 'statut'
 }
 
 export type ToastType = 'success' | 'error';

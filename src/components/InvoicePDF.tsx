@@ -97,6 +97,18 @@ export const InvoicePDF = React.forwardRef<HTMLDivElement, InvoicePDFProps>(
                     <span className="font-semibold" style={{ color: '#080F0F' }}>{invoice.eventLocation}</span>
                   </div>
                 )}
+                {invoice.dueDate && (
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold" style={{ color: '#080F0F' }}>Échéance:</span>
+                    <span className="font-semibold" style={{ color: '#080F0F' }}>{new Date(invoice.dueDate).toLocaleDateString('fr-FR')}</span>
+                  </div>
+                )}
+                {invoice.status && (
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold" style={{ color: '#080F0F' }}>Statut:</span>
+                    <span className="font-semibold" style={{ color: '#080F0F' }}>{invoice.status}</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -142,6 +154,9 @@ export const InvoicePDF = React.forwardRef<HTMLDivElement, InvoicePDFProps>(
                 {invoice.advisorName && (
                   <p style={{ color: '#080F0F' }}><span className="font-semibold">Conseiller:</span> {invoice.advisorName}</p>
                 )}
+                {invoice.description_travaux && (
+                  <p style={{ color: '#080F0F' }}><span className="font-semibold">Description des travaux:</span> {invoice.description_travaux}</p>
+                )}
               </div>
             </div>
           </div>
@@ -186,7 +201,7 @@ export const InvoicePDF = React.forwardRef<HTMLDivElement, InvoicePDFProps>(
                     <td className="border border-gray-300 px-1 py-2 text-right text-xs">
                       {product.discount > 0 ? (
                         <span className="text-red-600 font-semibold">
-                          -{product.discountType === 'percent' 
+                          -{product.discountType === 'percentage' 
                             ? `${product.discount}%` 
                             : formatCurrency(product.discount)
                           }
@@ -225,7 +240,7 @@ export const InvoicePDF = React.forwardRef<HTMLDivElement, InvoicePDFProps>(
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
                 <div className="space-y-1">
                   <div className="flex justify-between text-xs">
-                    <span className="font-semibold" style={{ color: '#080F0F' }}>Total HT:</span>
+                    <span className="font-semibold" style={{ color: '#080F0F' }}>Montant HT:</span>
                     <span className="font-semibold" style={{ color: '#080F0F' }}>{formatCurrency(totals.subtotal)}</span>
                   </div>
                   <div className="flex justify-between text-xs">
@@ -278,13 +293,19 @@ export const InvoicePDF = React.forwardRef<HTMLDivElement, InvoicePDFProps>(
           </div>
 
           {/* Signature si présente */}
-          {invoice.signature && (
+          {invoice.isSigned && (
             <div className="mt-4 flex justify-end">
               <div className="border border-gray-300 rounded p-2 w-48">
                 <h4 className="text-[#477A0C] font-bold text-xs mb-1 text-center">SIGNATURE CLIENT</h4>
-                <div className="h-12 flex items-center justify-center">
-                  <img src={invoice.signature} alt="Signature" className="max-h-full max-w-full" />
-                </div>
+                {invoice.signature ? (
+                  <div className="h-12 flex items-center justify-center">
+                    <img src={invoice.signature} alt="Signature" className="max-h-full max-w-full" />
+                  </div>
+                ) : (
+                  <div className="h-12 flex items-center justify-center text-xs text-gray-600 italic">
+                    Document signé électroniquement
+                  </div>
+                )}
                 <p className="text-xs text-center mt-1" style={{ color: '#080F0F', fontSize: '10px' }}>
                   Signé le {new Date().toLocaleDateString('fr-FR')} à {new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
                 </p>
