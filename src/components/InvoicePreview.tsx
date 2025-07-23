@@ -22,10 +22,6 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
     );
   }, 0);
 
-  // Calculer l'acompte et le montant restant
-  const acompteAmount = invoice.payment.depositAmount || 0;
-  const montantRestant = totalTTC - acompteAmount;
-
   // Calculer les totaux pour l'affichage
   const totalHT = totalTTC / (1 + (invoice.taxRate / 100));
   const totalTVA = totalTTC - totalHT;
@@ -43,17 +39,20 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
   return (
     <div 
       id="facture-apercu" 
-      className={`facture-apercu ${className}`}
+      className={`original-invoice ${className}`}
     >
-      {/* PAGE 1 - FACTURE SIMPLE ET BASIQUE */}
+      {/* PAGE 1 - REPRODUCTION EXACTE DE LA FACTURE ORIGINALE */}
       <div className="invoice-page">
         
-        {/* En-tête simple sans logo */}
-        <header className="invoice-header">
-          <div className="company-info">
-            <h1>MYCONFORT</h1>
-            <p className="tagline">Quand on dort bien, on vit bien</p>
+        {/* En-tête avec informations de l'entreprise et encadré FACTURE */}
+        <header className="original-header">
+          <div className="company-section">
+            <div className="company-info">
+              <h1>MYCONFORT</h1>
+              <p className="tagline">Quand on dort bien, on vit bien.</p>
+            </div>
             <div className="company-details">
+              <p><strong>MYCONFORT</strong></p>
               <p>88 Avenue des Ternes</p>
               <p>75017 Paris, France</p>
               <p>SIRET: 824 313 530 00027</p>
@@ -63,51 +62,49 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
             </div>
           </div>
           
-          <div className="invoice-info">
-            <h2>FACTURE</h2>
-            <p><strong>N° Facture:</strong> {invoice.invoiceNumber}</p>
-            <p><strong>Date:</strong> {new Date(invoice.invoiceDate).toLocaleDateString('fr-FR')}</p>
-            <p><strong>Lieu:</strong> {invoice.eventLocation || 'Paris'}</p>
+          <div className="invoice-header-green">
+            <div className="facture-title">FACTURE</div>
+            <div className="invoice-details">
+              <p><strong>N° Facture:</strong> {invoice.invoiceNumber}</p>
+              <p><strong>Date:</strong> {new Date(invoice.invoiceDate).toLocaleDateString('fr-FR')}</p>
+            </div>
           </div>
         </header>
 
-        {/* Informations client */}
-        <section className="client-section">
-          <h3>FACTURER À</h3>
-          <div className="client-info">
-            <p><strong>{invoice.client.name}</strong></p>
-            <p>{invoice.client.address}</p>
-            <p>{invoice.client.postalCode} {invoice.client.city}</p>
-            <p>Email: {invoice.client.email}</p>
-            <p>Tél: {invoice.client.phone}</p>
+        {/* Section principale en deux colonnes */}
+        <section className="main-sections">
+          <div className="left-section">
+            <div className="section-header green-bg">FACTURER À</div>
+            <div className="client-details">
+              <p><strong>{invoice.client.name}</strong></p>
+              <p>{invoice.client.address}</p>
+              <p>{invoice.client.postalCode} {invoice.client.city}</p>
+              <p><strong>Tél:</strong> {invoice.client.phone}</p>
+              <p><strong>Email:</strong> {invoice.client.email}</p>
+            </div>
           </div>
-        </section>
-
-        {/* Informations paiement et livraison */}
-        <section className="payment-delivery">
-          <div className="payment-info">
-            <h4>Mode de paiement:</h4>
-            <p>{invoice.payment.method || 'Carte Bleue'}</p>
-          </div>
-          <div className="delivery-info">
-            <h4>Mode de livraison:</h4>
-            <p>{invoice.delivery.method || 'Livraison par transporteur'}</p>
-            <p className="delivery-note">Livraison réalisée au pied de l'immeuble ou au portail</p>
+          
+          <div className="right-section">
+            <div className="section-header green-bg">INFORMATIONS COMPLÉMENTAIRES</div>
+            <div className="additional-info">
+              <p><strong>Type de logement:</strong> Maison</p>
+              <p><strong>Code d'accès:</strong> 123456</p>
+            </div>
           </div>
         </section>
 
         {/* Tableau des produits */}
         <section className="products-section">
-          <h3>DÉTAIL DES PRODUITS</h3>
-          <table className="products-table">
+          <div className="section-header green-bg">DÉTAIL DES PRODUITS</div>
+          <table className="original-products-table">
             <thead>
               <tr>
-                <th>Désignation</th>
-                <th>Qté</th>
+                <th>DÉSIGNATION</th>
+                <th>QTÉ</th>
                 <th>PU HT</th>
                 <th>PU TTC</th>
-                <th>Remise</th>
-                <th>Total TTC</th>
+                <th>REMISE</th>
+                <th>TOTAL TTC</th>
               </tr>
             </thead>
             <tbody>
@@ -122,92 +119,87 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
                 
                 return (
                   <tr key={index}>
-                    <td>{product.name}</td>
-                    <td>{product.quantity}</td>
-                    <td>{formatCurrency(unitPriceHT)}</td>
-                    <td>{formatCurrency(product.priceTTC)}</td>
                     <td>
+                      <div className="product-name">{product.name}</div>
+                      <div className="product-subtitle">Matelas</div>
+                    </td>
+                    <td className="text-center">{product.quantity}</td>
+                    <td className="text-right">{formatCurrency(unitPriceHT)}</td>
+                    <td className="text-right">{formatCurrency(product.priceTTC)}</td>
+                    <td className="text-center red-text">
                       {product.discount > 0 ? (
                         product.discountType === 'percentage' ? 
-                          `${product.discount}%` : 
-                          formatCurrency(product.discount)
+                          `-${product.discount}%` : 
+                          `-${formatCurrency(product.discount)}`
                       ) : '-'}
                     </td>
-                    <td>{formatCurrency(totalProduct)}</td>
+                    <td className="text-right font-bold">{formatCurrency(totalProduct)}</td>
                   </tr>
                 );
               })}
             </tbody>
           </table>
+          
+          {/* Mention légale sous le tableau */}
+          <div className="legal-mention-table">
+            <p>⚖️ <strong>Article L224-59 du Code de la consommation</strong></p>
+            <p>« Avant la conclusion de tout contrat entre un consommateur et un professionnel à l'occasion d'une foire, d'un salon [...] le professionnel informe le consommateur qu'il ne dispose pas d'un délai de rétractation. »</p>
+          </div>
         </section>
 
-        {/* Encadré de signature + Totaux */}
-        <section className="signature-totals">
-          {/* Encadré signature */}
-          <div className="signature-box">
-            <h4>Signature client MYCONFORT:</h4>
-            <div className="signature-area">
-              {invoice.signature ? (
-                <div className="signature-content">
-                  <img src={invoice.signature} alt="Signature électronique" className="signature-image" />
-                  <p className="signature-status">✓ Signature électronique enregistrée</p>
-                  <p className="signature-date">Signée le {new Date().toLocaleDateString('fr-FR')}</p>
-                </div>
-              ) : (
-                <div className="signature-placeholder">
-                  <p>Signature en attente</p>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Totaux */}
-          <div className="totals-box">
-            <div className="total-line">
-              <span>Total HT:</span>
+        {/* Totaux à droite */}
+        <section className="totals-right">
+          <div className="totals-box-original">
+            <div className="total-row">
+              <span>Montant HT:</span>
               <span>{formatCurrency(totalHT)}</span>
             </div>
-            <div className="total-line">
-              <span>TVA ({invoice.taxRate}%):</span>
+            <div className="total-row">
+              <span>TVA (20%):</span>
               <span>{formatCurrency(totalTVA)}</span>
             </div>
-            <div className="total-line">
+            <div className="total-row red-text">
               <span>Remise totale:</span>
               <span>-{formatCurrency(totalDiscount)}</span>
             </div>
-            <div className="total-line-final">
+            <div className="total-row-final">
               <span><strong>TOTAL TTC:</strong></span>
               <span><strong>{formatCurrency(totalTTC)}</strong></span>
             </div>
             
-            {acompteAmount > 0 && (
-              <div className="total-line">
-                <span><strong>RESTE À PAYER:</strong></span>
-                <span><strong>{formatCurrency(montantRestant)}</strong></span>
-              </div>
-            )}
+            {/* Case à cocher conditions générales */}
+            <div className="conditions-checkbox">
+              <label>
+                <input type="checkbox" /> J'ai lu et j'accepte les conditions générales de vente *
+              </label>
+            </div>
           </div>
         </section>
 
-        {/* Notes si présentes */}
-        {invoice.invoiceNotes && (
-          <section className="notes-section">
-            <h4>Remarques:</h4>
-            <p>{invoice.invoiceNotes}</p>
-          </section>
-        )}
+        {/* Modalités de paiement */}
+        <section className="payment-modalities">
+          <div className="section-header green-bg">MODALITÉS DE PAIEMENT</div>
+          <div className="payment-details">
+            <p><strong>Mode de règlement:</strong> {invoice.payment.method || 'Carte Bleue'}</p>
+            <p>Si vous devez envoyer des règlements par chèque, Voici l'adresse :</p>
+            <p>SAV HtConfort 8 rue du grégal 66510 st hippolyte 0661486023</p>
+          </div>
+        </section>
 
-        {/* Mention légale */}
-        <div className="legal-notice">
-          <p><strong>⚖️ Article L224‑59 du Code de la consommation</strong></p>
-          <p>« Avant la conclusion de tout contrat entre un consommateur et un professionnel à l'occasion d'une foire, d'un salon [...] le professionnel informe le consommateur qu'il ne dispose pas d'un délai de rétractation. »</p>
-        </div>
-
-        {/* Footer simple */}
-        <footer className="invoice-footer">
-          <h3>MYCONFORT</h3>
-          <p>Merci pour votre confiance !</p>
-          <p>Votre spécialiste en matelas et literie de qualité</p>
+        {/* Footer vert MYCONFORT */}
+        <footer className="green-footer">
+          <div className="footer-content">
+            <div className="footer-logo-section">
+              <div className="footer-logo">🌸 MYCONFORT</div>
+              <div className="footer-text">
+                <p><strong>Merci de votre confiance !</strong></p>
+                <p>Votre spécialiste en matelas et literie de qualité</p>
+              </div>
+            </div>
+          </div>
+          <div className="footer-bottom">
+            <p>TVA non applicable art. 293 B du CGI – NCS Paris 824 313 530</p>
+          </div>
         </footer>
 
       </div>
