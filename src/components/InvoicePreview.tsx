@@ -1,6 +1,6 @@
 import React from 'react';
 import { Invoice } from '../types';
-import { formatCurrency, calculateProductTotal } from '../utils/calculations';
+import { formatCurrency } from '../utils/calculations';
 
 interface InvoicePreviewProps {
   invoice: Invoice;
@@ -11,33 +11,15 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
   invoice, 
   className = "" 
 }) => {
-  // Calculer le total TTC
-  const totalTTC = invoice.products.reduce((sum, product) => {
-    return sum + calculateProductTotal(
-      product.quantity,
-      product.priceTTC,
-      product.discount,
-      product.discountType === 'percentage' ? 'percent' : 'fixed'
-    );
-  }, 0);
-
-  // Calculer l'acompte et le montant restant
-  const acompteAmount = invoice.payment.depositAmount || 0;
-  const montantRestant = totalTTC - acompteAmount;
-
-  // Calculer les totaux pour l'affichage
-  const totalHT = totalTTC / (1 + (invoice.taxRate / 100));
-  const totalTVA = totalTTC - totalHT;
-  const totalDiscount = invoice.products.reduce((sum, product) => {
-    const originalTotal = product.priceTTC * product.quantity;
-    const discountedTotal = calculateProductTotal(
-      product.quantity,
-      product.priceTTC,
-      product.discount,
-      product.discountType === 'percentage' ? 'percent' : 'fixed'
-    );
-    return sum + (originalTotal - discountedTotal);
-  }, 0);
+  // Utiliser les montants pré-calculés directement depuis l'invoice
+  const {
+    montantHT,
+    montantTTC,
+    montantTVA,
+    montantRemise,
+    montantAcompte,
+    montantRestant
+  } = invoice;
 
   return (
     <div 
@@ -51,7 +33,7 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
             <h1>MYCONFORT</h1>
             <p className="subtitle">Facturation professionnelle avec signature électronique</p>
           </div>
-          {invoice.signature && (
+          {invoice.isSigned && (
             <div className="signed-badge">✓ SIGNÉE</div>
           )}
         </header>
@@ -85,42 +67,42 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
           </div>
         </section>
 
-        {/* Client Information */}
+        {/* Client Information - Utiliser les champs plats */}
         <div className="section-header">INFORMATIONS CLIENT</div>
         <div className="client-grid">
           <div className="client-field">
             <span className="label">Nom complet</span>
-            <span className="value">{invoice.client.name}</span>
+            <span className="value">{invoice.clientName}</span>
           </div>
           <div className="client-field">
             <span className="label">Adresse</span>
-            <span className="value">{invoice.client.address}</span>
+            <span className="value">{invoice.clientAddress}</span>
           </div>
           <div className="client-field">
             <span className="label">Code postal</span>
-            <span className="value">{invoice.client.postalCode}</span>
+            <span className="value">{invoice.clientPostalCode}</span>
           </div>
           <div className="client-field">
             <span className="label">Ville</span>
-            <span className="value">{invoice.client.city}</span>
+            <span className="value">{invoice.clientCity}</span>
           </div>
           <div className="client-field">
             <span className="label">Email</span>
-            <span className="value">{invoice.client.email}</span>
+            <span className="value">{invoice.clientEmail}</span>
           </div>
           <div className="client-field">
             <span className="label">Téléphone</span>
-            <span className="value">{invoice.client.phone}</span>
+            <span className="value">{invoice.clientPhone}</span>
           </div>
         </div>
 
         {/* Logistics Information */}
-        {invoice.delivery.method && (
+        {invoice.deliveryMethod && (
           <section className="info-section">
             <div className="info-header">INFORMATIONS LOGISTIQUES</div>
             <div className="info-row">
               <span className="info-label">Mode de livraison:</span>
-              <span className="info-value">{invoice.delivery.method}</span>
+              <span className="info-value">{invoice.deliveryMethod}</span>
             </div>
           </section>
         )}
@@ -130,7 +112,7 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
           <div className="info-header payment">MODE DE RÈGLEMENT</div>
           <div className="info-row">
             <span className="info-label">Méthode de paiement:</span>
-            <span className="info-value">{invoice.payment.method || 'Non spécifié'}</span>
+            <span className="info-value">{invoice.paymentMethod || 'Non spécifié'}</span>
           </div>
           
           {/* Signature Client - Rectangle au-dessus modalités */}
@@ -189,18 +171,10 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
             </thead>
             <tbody>
               {invoice.products.map((product, index) => {
-                const unitPriceHT = product.priceTTC / (1 + (invoice.taxRate / 100));
-                const totalProduct = calculateProductTotal(
-                  product.quantity,
-                  product.priceTTC,
-                  product.discount,
-                  product.discountType === 'percentage' ? 'percent' : 'fixed'
-                );
-                
                 return (
                   <tr key={index}>
                     <td>{product.quantity}</td>
-                    <td>{formatCurrency(unitPriceHT)}</td>
+                    <td>{formatCurrency(product.priceHT)}</td>
                     <td>{formatCurrency(product.priceTTC)}</td>
                     <td>
                       {product.discount > 0 ? (
@@ -209,7 +183,7 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
                           formatCurrency(product.discount)
                       ) : '-'}
                     </td>
-                    <td>{formatCurrency(totalProduct)}</td>
+                    <td>{formatCurrency(product.totalTTC)}</td>
                   </tr>
                 );
               })}
@@ -226,21 +200,21 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
           <div className="totals">
             <div className="total-row">
               <span className="total-label">Total HT:</span>
-              <span className="total-value">{formatCurrency(totalHT)}</span>
+              <span className="total-value">{formatCurrency(montantHT)}</span>
             </div>
             <div className="total-row">
               <span className="total-label">TVA ({invoice.taxRate}%):</span>
-              <span className="total-value">{formatCurrency(totalTVA)}</span>
+              <span className="total-value">{formatCurrency(montantTVA)}</span>
             </div>
-            {totalDiscount > 0 && (
+            {montantRemise > 0 && (
               <div className="total-row" style={{ color: '#e53e3e' }}>
                 <span className="total-label">Remise totale:</span>
-                <span className="total-value">-{formatCurrency(totalDiscount)}</span>
+                <span className="total-value">-{formatCurrency(montantRemise)}</span>
               </div>
             )}
             <div className="total-row final-total">
               <span className="total-label">TOTAL TTC:</span>
-              <span className="total-value">{formatCurrency(totalTTC)}</span>
+              <span className="total-value">{formatCurrency(montantTTC)}</span>
             </div>
             
             {/* Mention légale Article L224‑59 - Fond blanc sans encadré */}
@@ -253,11 +227,11 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
               </div>
             </div>
             {/* Acompte si applicable */}
-            {acompteAmount > 0 && (
+            {montantAcompte > 0 && (
               <>
                 <div className="total-row" style={{ marginTop: '10px' }}>
                   <span className="total-label">Acompte versé:</span>
-                  <span className="total-value" style={{ color: '#3182ce' }}>{formatCurrency(acompteAmount)}</span>
+                  <span className="total-value" style={{ color: '#3182ce' }}>{formatCurrency(montantAcompte)}</span>
                 </div>
                 <div className="total-row" style={{ 
                   backgroundColor: '#fff3cd', 

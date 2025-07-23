@@ -14,15 +14,14 @@ export interface Client {
 }
 
 export interface Product {
-  id?: string;
   name: string;
-  category: string;
   quantity: number;
-  unitPrice: number;
+  priceHT: number;
   priceTTC: number;
   discount: number;
-  discountType: 'percentage' | 'amount'; // Mis à jour pour correspondre au JSON de l'utilisateur
-  autoCalculateHT?: boolean;
+  discountType: 'percentage' | 'fixed';
+  totalHT: number;
+  totalTTC: number;
 }
 
 export interface ProductCatalog {
@@ -44,25 +43,48 @@ export interface PaymentInfo {
 }
 
 export interface Invoice {
+  // Informations de base
   invoiceNumber: string;
   invoiceDate: string;
-  eventLocation: string;
-  advisorName: string;
-  invoiceNotes: string; // Mappe à 'notes' dans le JSON
-  termsAccepted: boolean;
-  taxRate: number; // Mappe à 'tva' dans le JSON
-  client: Client;
-  delivery: DeliveryInfo;
-  payment: PaymentInfo;
+  eventLocation?: string;
+  
+  // Client - Structure plate pour compatibilité webhook
+  clientName: string;
+  clientEmail: string;
+  clientPhone: string;
+  clientAddress: string;
+  clientPostalCode: string;
+  clientCity: string;
+  
+  // Produits
   products: Product[];
-  signature?: string; // Pour l'URL de l'image de signature
-  isSigned: boolean; // Nouveau champ pour le statut booléen de la signature
-  montant_ht?: number; // Nouveau champ, sera calculé
-  montant_ttc?: number; // Nouveau champ, sera calculé
-  description_travaux: string; // Nouveau champ
-  fichier_facture?: string; // Nouveau champ pour le PDF en base64
-  dueDate?: string; // Nouveau champ pour 'date_echeance'
-  status?: string; // Nouveau champ pour 'statut'
+  
+  // Montants (calculés et stockés)
+  montantHT: number;
+  montantTTC: number;
+  montantTVA: number;
+  montantRemise: number;
+  taxRate: number;
+  
+  // Paiement
+  paymentMethod: string;
+  montantAcompte: number;
+  montantRestant: number;
+  
+  // Livraison
+  deliveryMethod: string;
+  
+  // Signature
+  signature?: string;
+  isSigned: boolean;
+  signatureDate?: string;
+  
+  // Notes
+  invoiceNotes?: string;
+  
+  // Métadonnées
+  createdAt: string;
+  updatedAt: string;
 }
 
 export type ToastType = 'success' | 'error';
