@@ -1277,3 +1277,285 @@
     display: none !important;
   }
 }
+
+/* VERSION BASIQUE - STYLES POUR FACTURE SIMPLE */
+
+/* Conteneur principal facture */
+.facture-apercu {
+  font-family: 'Arial', sans-serif;
+  line-height: 1.4;
+  color: #333;
+}
+
+.invoice-page {
+  background: white;
+  padding: 20px;
+  margin-bottom: 20px;
+  min-height: 297mm;
+  width: 210mm;
+  box-sizing: border-box;
+  page-break-after: always;
+}
+
+/* En-tête simple */
+.invoice-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #477A0C;
+}
+
+.company-info h1 {
+  font-size: 28px;
+  color: #477A0C;
+  margin: 0 0 5px 0;
+  font-weight: bold;
+}
+
+.company-info .tagline {
+  font-style: italic;
+  color: #666;
+  margin: 0 0 15px 0;
+  font-size: 14px;
+}
+
+.company-details p {
+  margin: 2px 0;
+  font-size: 12px;
+  color: #555;
+}
+
+.invoice-info {
+  text-align: right;
+}
+
+.invoice-info h2 {
+  font-size: 24px;
+  color: #477A0C;
+  margin: 0 0 15px 0;
+}
+
+.invoice-info p {
+  margin: 5px 0;
+  font-size: 13px;
+}
+
+/* Section client */
+.client-section {
+  margin-bottom: 25px;
+}
+
+.client-section h3 {
+  font-size: 16px;
+  color: #477A0C;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+}
+
+.client-info p {
+  margin: 3px 0;
+  font-size: 13px;
+}
+
+/* Paiement et livraison */
+.payment-delivery {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 25px;
+}
+
+.payment-info, .delivery-info {
+  flex: 1;
+}
+
+.payment-info h4, .delivery-info h4 {
+  font-size: 14px;
+  color: #477A0C;
+  margin-bottom: 8px;
+}
+
+.delivery-note {
+  font-size: 11px;
+  color: #666;
+  font-style: italic;
+  margin-top: 5px;
+}
+
+/* Tableau des produits */
+.products-section {
+  margin-bottom: 30px;
+}
+
+.products-section h3 {
+  font-size: 16px;
+  color: #477A0C;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+}
+
+.products-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.products-table th {
+  background: #477A0C;
+  color: white;
+  padding: 10px 8px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.products-table td {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+  font-size: 12px;
+}
+
+.products-table tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+/* SIGNATURE + TOTAUX - NOUVEAU STYLE */
+.signature-totals {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 30px;
+  align-items: flex-start;
+}
+
+.signature-box {
+  flex: 1;
+  border: 2px solid #477A0C;
+  padding: 15px;
+  background: #f8fdf4;
+  border-radius: 5px;
+}
+
+.signature-box h4 {
+  font-size: 14px;
+  color: #477A0C;
+  margin: 0 0 15px 0;
+  font-weight: bold;
+}
+
+.signature-area {
+  min-height: 120px;
+  background: white;
+  border: 1px dashed #477A0C;
+  padding: 10px;
+  border-radius: 3px;
+  position: relative;
+}
+
+.signature-content {
+  text-align: center;
+}
+
+.signature-image {
+  max-width: 100%;
+  max-height: 80px;
+  margin-bottom: 10px;
+}
+
+.signature-status {
+  color: #28a745;
+  font-size: 12px;
+  font-weight: bold;
+  margin: 5px 0;
+}
+
+.signature-date {
+  color: #666;
+  font-size: 11px;
+  margin: 5px 0;
+}
+
+.signature-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100px;
+  color: #477A0C;
+  font-style: italic;
+  font-size: 14px;
+}
+
+.totals-box {
+  min-width: 280px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.total-line {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 15px;
+  border-bottom: 1px solid #eee;
+  font-size: 13px;
+}
+
+.total-line:last-child {
+  border-bottom: none;
+}
+
+.total-line-final {
+  background: #477A0C;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+/* Notes */
+.notes-section {
+  margin-bottom: 25px;
+  padding: 15px;
+  background: #f9f9f9;
+  border-left: 4px solid #477A0C;
+}
+
+.notes-section h4 {
+  font-size: 14px;
+  color: #477A0C;
+  margin-bottom: 10px;
+}
+
+/* Mention légale */
+.legal-notice {
+  margin-bottom: 25px;
+  padding: 15px;
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 5px;
+  font-size: 11px;
+}
+
+.legal-notice p {
+  margin: 5px 0;
+}
+
+/* Footer */
+.invoice-footer {
+  text-align: center;
+  padding: 20px;
+  border-top: 2px solid #477A0C;
+  background: #f8fdf4;
+}
+
+.invoice-footer h3 {
+  font-size: 20px;
+  color: #477A0C;
+  margin: 0 0 10px 0;
+}
+
+.invoice-footer p {
+  margin: 5px 0;
+  font-size: 13px;
+  color: #666;
+}
