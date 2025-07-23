@@ -40,6 +40,16 @@ export const productCatalog: ProductCatalog[] = [
   { category: 'Oreillers', name: 'Pack divers', price: 0, priceTTC: 0, autoCalculateHT: false },
   
   // Accessoires
+  { category: 'Plateau', name: 'PLATEAU PRESTIGE 70 x 190', priceTTC: 70, autoCalculateHT: true },
+  { category: 'Plateau', name: 'PLATEAU PRESTIGE 80 x 200', priceTTC: 80, autoCalculateHT: true },
+  { category: 'Plateau', name: 'PLATEAU PRESTIGE 90 x 190', priceTTC: 100, autoCalculateHT: true },
+  { category: 'Plateau', name: 'PLATEAU PRESTIGE 90 x 200', priceTTC: 110, autoCalculateHT: true },
+  { category: 'Plateau', name: 'PLATEAU PRESTIGE 120 x 190', priceTTC: 160, autoCalculateHT: true },
+  { category: 'Plateau', name: 'PLATEAU PRESTIGE 140 x 190', priceTTC: 180, autoCalculateHT: true },
+  { category: 'Plateau', name: 'PLATEAU PRESTIGE 140 x 200', priceTTC: 190, autoCalculateHT: true },
+  { category: 'Plateau', name: 'PLATEAU PRESTIGE 160 x 200', priceTTC: 210, autoCalculateHT: true },
+  { category: 'Plateau', name: 'PLATEAU PRESTIGE 180 x 200', priceTTC: 220, autoCalculateHT: true },
+  { category: 'Plateau', name: 'PLATEAU PRESTIGE 200 x 200', priceTTC: 230, autoCalculateHT: true },
   { category: 'Accessoires', name: 'Protège-matelas', price: 0, priceTTC: 0, autoCalculateHT: false },
   { category: 'Accessoires', name: 'Housse de couette', price: 0, priceTTC: 0, autoCalculateHT: false },
   { category: 'Accessoires', name: 'Taie d\'oreiller', price: 0, priceTTC: 0, autoCalculateHT: false }
@@ -50,5 +60,6 @@ export const productCategories = [
   'Sur-matelas', 
   'Couettes',
   'Oreillers',
+  'Plateau',
   'Accessoires'
 ];
