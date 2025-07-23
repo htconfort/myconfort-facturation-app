@@ -202,7 +202,6 @@ export const ProductSection: React.FC<ProductSectionProps> = ({
     } else {
       onUpdate([...products, product]);
     }
-    }
 
     // Reset form
     setNewProduct({
