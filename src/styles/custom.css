@@ -583,6 +583,35 @@
   border: 1px dashed #ccc;
 }
 
+/* Signature compacte dans la section produits */
+.signature-box-compact {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 15px;
+  text-align: right;
+  max-width: 300px;
+  margin-left: auto;
+}
+
+.signature-label-small {
+  font-size: 11px;
+  color: #666;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.signature-compact {
+  max-height: 40px;
+  max-width: 80px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  background: white;
+  padding: 3px;
+  object-fit: contain;
+}
+
 /* Section notes */
 .notes-section {
   margin-bottom: 30px;
@@ -1465,7 +1494,8 @@
 .products-table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 20px;
+  margin-top: 10px;
+  border: 1px solid #ddd;
 }
 
 .products-table th {

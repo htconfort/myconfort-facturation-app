@@ -18,7 +18,8 @@
     color: #000 !important;
   }
   
-  /* Masquer TOUS les éléments non imprimables */
+  /* MASQUER ABSOLUMENT TOUS LES ÉLÉMENTS D'INTERFACE */
+  /* Masquage par éléments et classes */
   .no-print,
   .no-print *,
   button,
@@ -34,7 +35,6 @@
   footer,
   .header,
   .footer,
-  /* Masquer spécifiquement les éléments indésirables du modal */
   .modal-overlay,
   .modal-header,
   .modal-footer,
@@ -43,59 +43,69 @@
   .progress-section,
   .action-buttons,
   .close-button,
-  /* Masquer tous les éléments d'interface */
-  [class*="lucide"],
   .icon,
   .loading,
   .loader,
-  /* Masquer les sections de partage et upload par couleur de fond */
   .bg-purple-50,
   .bg-blue-50,
   .bg-green-50,
   .bg-gradient-to-r,
-  /* Masquer les éléments avec du texte spécifique */
   .text-purple-900,
   .text-blue-900,
   .text-green-600,
-  /* Masquer les boutons et contrôles */
-  [role="button"],
-  input[type="button"],
-  input[type="submit"],
-  /* Masquer les indicateurs de format et téléchargement */
   .format-info,
   .download-info,
   .auto-info,
-  /* Masquer tout ce qui contient des flex avec espacement (probablement des interfaces) */
-  .flex.items-center.space-x-3:not(.signature-box *),
-  .flex.items-center.space-x-2:not(.signature-box *),
-  /* Masquer les divs avec des classes d'interface spécifiques */
-  div[class*="overflow-auto"]:not(#pdf-preview-content):not(.signature-box),
-  div[class*="bg-gray-100"]:not(#pdf-preview-content):not(.signature-box),
-  /* Masquer tout sauf le contenu de la facture */
-  body > *:not([id="pdf-preview-content"]):not(.professional-invoice):not(.invoice-page) {
+  .modal-backdrop,
+  .modal-content,
+  .toolbar,
+  .action-bar,
+  .button-group,
+  .controls {
     display: none !important;
     visibility: hidden !important;
   }
   
-  /* S'assurer que seul le contenu principal est visible */
+  /* Masquer les éléments par attributs */
+  [class*="lucide"],
+  [role="button"],
+  [class*="button"],
+  [class*="btn-"],
+  [data-testid],
+  input[type="button"],
+  input[type="submit"] {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  
+  /* Masquer spécifiquement les éléments du modal par couleur de fond */
+  [class*="bg-gradient"],
+  [class*="border-purple"],
+  [class*="border-blue"] {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  
+  /* FORCER L'AFFICHAGE UNIQUEMENT DU CONTENU FACTURE */
+  /* Masquer complètement le modal et tous ses éléments sauf le contenu facture */
+  .fixed.inset-0 * {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  
+  /* Afficher uniquement le contenu de la facture */
   #pdf-preview-content,
   #pdf-preview-content *,
   .professional-invoice,
   .professional-invoice *,
   .invoice-page,
-  .invoice-page * {
+  .invoice-page *,
+  .conditions-page,
+  .conditions-page * {
     display: block !important;
     visibility: visible !important;
   }
   
-  /* Re-masquer les éléments spécifiques même dans le contenu principal */
-  #pdf-preview-content .no-print,
-  .professional-invoice .no-print,
-  .invoice-page .no-print {
-    display: none !important;
-    visibility: hidden !important;
-  }
-
   /* Configuration pages A4 */
   @page {
     size: A4;
@@ -103,7 +113,7 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
   
-  /* Facture professionnelle - Page 1 */
+  /* STRUCTURE PRINCIPALE DE LA FACTURE */
   .professional-invoice {
     width: 100% !important;
     max-width: none !important;
@@ -112,9 +122,11 @@
     background: white !important;
     font-size: 12px !important;
     line-height: 1.4 !important;
+    box-shadow: none !important;
+    border: none !important;
   }
   
-  /* Page de facture */
+  /* PAGE 1 - FACTURE PRINCIPALE */
   .invoice-page {
     width: 100% !important;
     max-width: none !important;
@@ -127,7 +139,7 @@
     min-height: 27cm !important;
   }
   
-  /* En-tête professionnel */
+  /* EN-TÊTE PROFESSIONNEL */
   .invoice-header {
     display: flex !important;
     justify-content: space-between !important;
@@ -148,573 +160,262 @@
     max-width: 100px !important;
     max-height: 60px !important;
     display: block !important;
-    object-fit: contain !important;
   }
   
-  .company-info h1 {
-    font-size: 22px !important;
-    font-weight: bold !important;
-    color: #477A0C !important;
-    margin: 0 0 5px 0 !important;
-  }
-  
-  .company-tagline {
-    font-style: italic !important;
-    color: #477A0C !important;
-    font-size: 12px !important;
-    margin: 0 0 10px 0 !important;
-  }
-  
-  .company-details {
-    font-size: 10px !important;
-    line-height: 1.2 !important;
-  }
-  
-  .company-details p {
-    margin: 1px 0 !important;
-  }
-  
-  .invoice-info {
-    text-align: right !important;
-    min-width: 180px !important;
-  }
-  
-  .invoice-info h2 {
-    font-size: 18px !important;
-    font-weight: bold !important;
-    color: #477A0C !important;
-    margin: 0 0 12px 0 !important;
-  }
-  
-  .detail-row {
-    display: flex !important;
-    justify-content: space-between !important;
-    margin-bottom: 6px !important;
-    font-size: 11px !important;
-  }
-  
-  .detail-row .label {
-    font-weight: 600 !important;
-    color: #666 !important;
-  }
-  
-  .detail-row .value {
-    font-weight: 500 !important;
-    color: #333 !important;
-  }
-  
-  /* Section client */
-  .client-section {
-    margin-bottom: 25px !important;
-    page-break-inside: avoid !important;
-  }
-  
-  .client-section h3 {
-    font-size: 14px !important;
-    font-weight: bold !important;
-    color: #477A0C !important;
-    margin: 0 0 12px 0 !important;
-    text-transform: uppercase !important;
-  }
-  
-  .client-info {
-    background: #f8f9fa !important;
-    padding: 12px !important;
-    border-radius: 6px !important;
-    border-left: 3px solid #477A0C !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-  
-  .client-info p {
-    margin: 2px 0 !important;
-    font-size: 11px !important;
-  }
-  
-  .client-name {
-    font-weight: bold !important;
-    font-size: 13px !important;
-    color: #477A0C !important;
-  }
-  
-  /* Section paiement et livraison */
-  .payment-delivery-section {
-    display: flex !important;
-    gap: 25px !important;
-    margin-bottom: 25px !important;
-    padding: 12px !important;
-    background: #f1f8e9 !important;
-    border-radius: 6px !important;
-    page-break-inside: avoid !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-  
-  .payment-info, .delivery-info {
+  .company-info {
     flex: 1 !important;
-  }
-  
-  .payment-info h4, .delivery-info h4 {
-    font-size: 12px !important;
-    font-weight: bold !important;
-    color: #477A0C !important;
-    margin: 0 0 6px 0 !important;
-  }
-  
-  .payment-info p, .delivery-info p {
-    margin: 3px 0 !important;
     font-size: 11px !important;
+    line-height: 1.3 !important;
   }
   
-  .delivery-note {
-    font-style: italic !important;
-    color: #666 !important;
-    font-size: 10px !important;
-  }
-  }
-  
-  .info-value {
-    width: 60% !important;
-    color: #000 !important;
-  }
-  
-  /* Styles pour les titres */
-  h1, h2, h3, h4, h5, h6 {
-    color: #477A0C !important;
-    page-break-after: avoid;
-    margin-top: 0 !important;
-  }
-  
-  
-  /* Styles pour les tableaux */
-  table {
-    width: 100% !important;
-    border-collapse: collapse !important;
-    page-break-inside: avoid;
-    margin: 15px 0 !important;
-    font-size: 10px !important;
-  }
-  
-  table th {
-    background-color: #477A0C !important;
-    color: white !important;
-    padding: 6px !important;
-    border: 1px solid #333 !important;
-    font-weight: bold !important;
-    font-size: 10px !important;
-  }
-  
-  table td {
-    padding: 4px 6px !important;
-    border: 1px solid #ddd !important;
-    vertical-align: top !important;
-    font-size: 9px !important;
-  }
-  
-  table tr:nth-child(even) {
-    background-color: #f8f9fa !important;
-  }
-  
-  /* Styles pour les totaux */
-  .totals-section {
-    background: #f8f9fa !important;
-    border: 1px solid #ddd !important;
-    padding: 10px !important;
-    margin: 15px 0 !important;
-    page-break-inside: avoid !important;
-  }
-  
-  .total-row {
-    display: flex !important;
-    justify-content: space-between !important;
-    margin-bottom: 5px !important;
-  }
-  
-  .total-final {
-    background-color: #477A0C !important;
-    color: white !important;
-    padding: 8px !important;
-    font-weight: bold !important;
-    font-size: 14px !important;
-    margin-top: 10px !important;
-  }
-  
-  /* Styles spécifiques pour la signature */
-  .signature-box {
-    border: 2px solid #477A0C !important;
-    padding: 15px !important;
-    margin: 20px 0 !important;
-    background: #f8f9fa !important;
-    page-break-inside: avoid !important;
-    display: block !important;
-    visibility: visible !important;
-  }
-  
-  .signature-box img,
-  .signature-image,
-  .signature-pad canvas {
-    max-width: 300px !important;
-    max-height: 100px !important;
-    display: block !important;
-    visibility: visible !important;
-    margin: 10px 0 !important;
-  }
-  
-  .signature-label {
+  .invoice-title {
+    text-align: right !important;
+    font-size: 24px !important;
     font-weight: bold !important;
     color: #477A0C !important;
     margin-bottom: 10px !important;
-    font-size: 12px !important;
   }
   
-  .signature-status {
-    color: #477A0C !important;
-    font-weight: bold !important;
+  .invoice-meta {
+    text-align: right !important;
+    font-size: 11px !important;
+    line-height: 1.4 !important;
   }
   
-  /* Éviter les coupures de page */
-  .no-page-break,
-  .signature-section,
-  .totals-section,
-  .client-info,
-  .company-info {
-    page-break-inside: avoid !important;
+  /* SECTION CLIENT */
+  .client-section {
+    margin-bottom: 30px !important;
+    page-break-after: avoid !important;
   }
   
-  /* Styles pour les sections importantes */
-  .section-header {
-    background-color: #477A0C !important;
-    color: white !important;
-    padding: 8px 12px !important;
-    margin: 15px 0 5px 0 !important;
-    font-weight: bold !important;
-    page-break-after: avoid;
-  }
-  
-  /* Styles pour la signature */
-  .signature-box {
-    border: 2px solid #477A0C !important;
-    padding: 10px !important;
-    margin: 15px 0 !important;
-    background: #f8f9fa !important;
-    page-break-inside: avoid !important;
-  }
-  
-  .signature-box img {
-    max-width: 200px !important;
-    max-height: 60px !important;
-  }
-  
-  /* Styles pour les totaux */
-  .totals-section {
-    background: #f8f9fa !important;
-    border: 1px solid #ddd !important;
-    padding: 15px !important;
-    margin: 20px 0 !important;
-    page-break-inside: avoid !important;
-  }
-  
-  .total-final {
-    background-color: #477A0C !important;
-    color: white !important;
-    padding: 10px !important;
-    font-weight: bold !important;
-    font-size: 16px !important;
-  }
-  
-  /* Styles pour les mentions légales */
-  .legal-notice {
-    background-color: #dc2626 !important;
-    color: white !important;
-    padding: 10px !important;
-    margin: 15px 0 !important;
-    border: 2px solid #dc2626 !important;
-    font-weight: bold !important;
-    page-break-inside: avoid !important;
-  }
-  
-  /* Styles pour les informations client */
   .client-grid {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
-    gap: 15px !important;
-    margin: 15px 0 !important;
-    page-break-inside: avoid !important;
+    gap: 30px !important;
+    margin-bottom: 20px !important;
   }
   
-  .client-field {
-    margin-bottom: 8px !important;
-  }
-  
-  .client-field .label {
-    font-weight: bold !important;
-    color: #477A0C !important;
-    font-size: 10px !important;
-    text-transform: uppercase !important;
-  }
-  
-  .client-field .value {
-    color: #000 !important;
-    font-size: 12px !important;
-    margin-top: 2px !important;
-  }
-  
-  /* Forcer les couleurs importantes */
-  .bg-green-600,
-  .bg-green-700,
-  .bg-\[#477A0C\] {
-    background-color: #477A0C !important;
-    color: white !important;
-  }
-  
-  .text-green-600,
-  .text-green-700,
-  .text-\[#477A0C\] {
-    color: #477A0C !important;
-  }
-  
-  .bg-red-600,
-  .bg-red-500 {
-    background-color: #dc2626 !important;
-    color: white !important;
-  }
-  
-  /* Optimisations pour l'impression */
-  img {
-    max-width: 100% !important;
-    height: auto !important;
-    page-break-inside: avoid !important;
-  }
-  
-  /* Éviter les lignes orphelines */
-  p, li {
-    orphans: 3;
-    widows: 3;
-  }
-  
-  /* Styles pour les codes et montants */
-  .font-mono,
-  code {
-    font-family: 'Courier New', monospace !important;
-    background: #f1f1f1 !important;
-    padding: 2px 4px !important;
-    border-radius: 3px !important;
-  }
-  
-  /* Styles pour les badges de statut */
-  .status-badge {
-    border: 1px solid #333 !important;
-    padding: 4px 8px !important;
-    border-radius: 4px !important;
-    font-size: 10px !important;
-    font-weight: bold !important;
-  }
-  
-  /* Masquer les scrollbars */
-  ::-webkit-scrollbar {
-    display: none !important;
-  }
-  
-  /* Configuration de page optimisée */
-  @page {
-    size: A4;
-    margin: 0.5cm;
-  }
-  
-  /* Première page sans en-tête */
-  @page :first {
-    margin: 0.5cm;
-  }
-  
-  /* Forcer les sauts de page appropriés */
-  .page-break-before,
-  .conditions-generales {
-    page-break-before: always !important;
-  }
-  
-  .page-break-after {
-    page-break-after: always !important;
-  }
-  
-  .page-break-avoid,
-  .signature-section,
-  .totals-section,
   .client-info,
-  .company-info {
+  .billing-info {
+    border: 1px solid #ddd !important;
+    padding: 15px !important;
+    border-radius: 5px !important;
+    background: #f9f9f9 !important;
+  }
+  
+  .client-info h3,
+  .billing-info h3 {
+    margin: 0 0 10px 0 !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+    color: #477A0C !important;
+  }
+  
+  .client-info p,
+  .billing-info p {
+    margin: 3px 0 !important;
+    font-size: 11px !important;
+    line-height: 1.3 !important;
+  }
+  
+  /* SECTION PRODUITS */
+  .products-section {
+    margin-bottom: 30px !important;
     page-break-inside: avoid !important;
   }
   
-  /* Réduire l'espacement pour tout faire tenir sur une page */
-  .compact-spacing {
-    margin: 5px 0 !important;
-    padding: 3px 0 !important;
+  .products-section h3 {
+    font-size: 16px !important;
+    font-weight: bold !important;
+    color: #477A0C !important;
+    margin-bottom: 15px !important;
+    border-bottom: 1px solid #ddd !important;
+    padding-bottom: 5px !important;
   }
   
-  .compact-spacing h1,
-  .compact-spacing h2,
-  .compact-spacing h3 {
-    margin: 5px 0 !important;
-  }
-  
-  .compact-spacing .info-section {
-    margin: 8px 0 !important;
-  }
-  
-  .compact-spacing .info-header {
-    padding: 5px 8px !important;
-    margin-bottom: 5px !important;
-  }
-  
-  /* Tableau des produits */
   .products-table {
     width: 100% !important;
     border-collapse: collapse !important;
-    margin-bottom: 15px !important;
-    page-break-inside: avoid !important;
+    margin-bottom: 20px !important;
+  }
+  
+  .products-table th,
+  .products-table td {
+    border: 1px solid #ddd !important;
+    padding: 8px !important;
+    text-align: left !important;
+    font-size: 11px !important;
+    line-height: 1.3 !important;
   }
   
   .products-table th {
     background: #477A0C !important;
     color: white !important;
-    padding: 8px 6px !important;
-    text-align: left !important;
-    font-weight: 600 !important;
-    font-size: 11px !important;
-    border: 1px solid #3a6509 !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
+    font-weight: bold !important;
   }
   
-  .products-table td {
-    padding: 6px !important;
+  .products-table tr:nth-child(even) {
+    background: #f9f9f9 !important;
+  }
+  
+  .products-table .text-right {
+    text-align: right !important;
+  }
+  
+  /* SIGNATURE COMPACTE 2x3cm EXACTEMENT */
+  .signature-compact {
+    max-width: 2cm !important;
+    max-height: 3cm !important;
+    width: 2cm !important;
+    height: 3cm !important;
+    object-fit: contain !important;
     border: 1px solid #ddd !important;
-    font-size: 10px !important;
+    padding: 2px !important;
+    border-radius: 3px !important;
+    background: white !important;
+    display: block !important;
+    margin: 5px 0 !important;
   }
   
-  .product-name {
-    font-weight: 500 !important;
-  }
-  
-  /* Section totaux */
+  /* TOTAUX */
   .totals-section {
     display: flex !important;
     justify-content: flex-end !important;
-    margin-bottom: 20px !important;
+    margin-bottom: 30px !important;
+    page-break-inside: avoid !important;
   }
   
   .totals-table {
-    min-width: 200px !important;
+    border-collapse: collapse !important;
+    min-width: 300px !important;
+  }
+  
+  .totals-table td {
     border: 1px solid #ddd !important;
-    border-radius: 4px !important;
-  }
-  
-  .total-row {
-    display: flex !important;
-    justify-content: space-between !important;
-    padding: 6px 10px !important;
-    border-bottom: 1px solid #eee !important;
-    font-size: 11px !important;
-  }
-  
-  .total-row.final {
-    background: #477A0C !important;
-    color: white !important;
-    font-weight: bold !important;
+    padding: 8px 15px !important;
     font-size: 12px !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
+    line-height: 1.3 !important;
   }
   
-  .total-row.balance {
-    background: #fff3cd !important;
-    color: #856404 !important;
+  .totals-table .font-bold {
     font-weight: bold !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
   }
   
-  /* Section signature */
-  .signature-section {
+  .totals-table .bg-green-50 {
+    background: #f0f9ff !important;
+  }
+  
+  .totals-table .text-green-800 {
+    color: #166534 !important;
+  }
+  
+  /* MODE DE RÈGLEMENT */
+  .payment-section {
     margin-bottom: 20px !important;
-    padding: 10px !important;
-    background: #f8f9fa !important;
-    border-radius: 4px !important;
     page-break-inside: avoid !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
   }
   
-  .signature-section h4 {
-    font-size: 12px !important;
+  .payment-section h3 {
+    font-size: 14px !important;
+    font-weight: bold !important;
     color: #477A0C !important;
-    margin: 0 0 8px 0 !important;
+    margin-bottom: 10px !important;
   }
   
-  .signature-container {
-    display: flex !important;
-    align-items: center !important;
-    gap: 15px !important;
+  .payment-section p {
+    font-size: 11px !important;
+    line-height: 1.3 !important;
+    margin: 3px 0 !important;
   }
   
-  .signature-container img {
-    max-height: 40px !important;
-    max-width: 150px !important;
-    border: 1px solid #ddd !important;
-    border-radius: 3px !important;
-    padding: 3px !important;
-    background: white !important;
-  }
-  
-  .signature-status {
-    color: #28a745 !important;
-    font-weight: 500 !important;
+  /* INFORMATIONS LÉGALES */
+  .legal-section {
+    margin-top: 20px !important;
     font-size: 10px !important;
-  }
-  
-  /* Mention légale */
-  .legal-footer {
-    margin-top: auto !important;
-    padding-top: 15px !important;
-    border-top: 1px solid #ddd !important;
-  }
-  
-  .legal-notice {
-    font-size: 9px !important;
-    color: #666 !important;
-    background: #f8f9fa !important;
-    padding: 8px !important;
-    border-radius: 4px !important;
-    border-left: 2px solid #ffc107 !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-  
-  .legal-notice strong {
-    color: #333 !important;
-    display: block !important;
-    margin-bottom: 3px !important;
-    font-size: 10px !important;
-  }
-  
-  .legal-notice p {
-    margin: 0 !important;
     line-height: 1.2 !important;
+    color: #666 !important;
+    border-top: 1px solid #ddd !important;
+    padding-top: 15px !important;
+  }
+  
+  /* PAGE 2 - CONDITIONS GÉNÉRALES */
+  .conditions-page {
+    page-break-before: always !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    min-height: 27cm !important;
+  }
+  
+  .conditions-page h1 {
+    font-size: 18px !important;
+    font-weight: bold !important;
+    color: #477A0C !important;
+    text-align: center !important;
+    margin-bottom: 30px !important;
+    border-bottom: 2px solid #477A0C !important;
+    padding-bottom: 10px !important;
+  }
+  
+  .conditions-page h2 {
+    font-size: 14px !important;
+    font-weight: bold !important;
+    color: #477A0C !important;
+    margin: 20px 0 10px 0 !important;
+    border-bottom: 1px solid #ddd !important;
+    padding-bottom: 5px !important;
+  }
+  
+  .conditions-page h3 {
+    font-size: 12px !important;
+    font-weight: bold !important;
+    margin: 15px 0 8px 0 !important;
+  }
+  
+  .conditions-page p,
+  .conditions-page li {
+    font-size: 10px !important;
+    line-height: 1.4 !important;
+    margin: 5px 0 !important;
+    text-align: justify !important;
+  }
+  
+  .conditions-page ul {
+    margin: 10px 0 10px 20px !important;
+  }
+  
+  .conditions-page li {
+    margin: 3px 0 !important;
+  }
+  
+  /* FORCER LA PAGINATION */
+  .page-break {
+    page-break-before: always !important;
+  }
+  
+  .no-page-break {
+    page-break-inside: avoid !important;
   }
 }
 
-/* 📱 STYLES POUR L'APERÇU AVANT IMPRESSION */
-@media screen {
-  .print-preview {
-    background: #f5f5f5;
-    padding: 20px;
-  }
-  
-  .print-preview .invoice-page {
-    background: white;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    margin: 0 auto 20px auto;
-    width: 21cm;
-    min-height: 29.7cm;
-    padding: 1cm;
-  }
+/* Styles de base pour l'écran (non-print) */
+.professional-invoice {
+  background: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.signature-compact {
+  max-width: 80px;
+  max-height: 60px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border: 1px solid #ddd;
+  padding: 2px;
+  border-radius: 3px;
+  background: white;
 }

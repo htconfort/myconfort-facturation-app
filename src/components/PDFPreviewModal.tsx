@@ -25,12 +25,70 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
   const [uploadStep, setUploadStep] = useState('');
   
   const handlePrint = () => {
-    window.print();
+    // Créer une nouvelle fenêtre pour l'impression avec seulement le contenu de la facture
+    const printWindow = window.open('', '_blank');
+    const invoiceContent = document.getElementById('pdf-preview-content');
+    
+    if (printWindow && invoiceContent) {
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Facture ${invoice.invoiceNumber}</title>
+          <link rel="stylesheet" href="/src/styles/custom.css">
+          <link rel="stylesheet" href="/src/styles/print.css">
+          <style>
+            @media print {
+              @page { 
+                size: A4; 
+                margin: 15mm; 
+              }
+              body { 
+                margin: 0; 
+                padding: 0; 
+                background: white !important; 
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+              }
+              .signature-compact {
+                max-width: 2cm !important;
+                max-height: 3cm !important;
+                width: 2cm !important;
+                height: 3cm !important;
+                object-fit: contain !important;
+                border: 1px solid #ddd !important;
+                padding: 2px !important;
+                border-radius: 3px !important;
+                background: white !important;
+              }
+              .conditions-page {
+                page-break-before: always !important;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          ${invoiceContent.innerHTML}
+        </body>
+        </html>
+      `);
+      
+      printWindow.document.close();
+      printWindow.focus();
+      
+      // Attendre que le contenu soit chargé avant d'imprimer
+      setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+      }, 500);
+    } else {
+      // Fallback: impression normale
+      window.print();
+    }
   };
 
   // Partage d'aperçu par email
   const handleSharePreviewViaEmail = async () => {
-    if (!invoice.client.email) {
+    if (!invoice.clientEmail) {
       alert('Veuillez renseigner l\'email du client pour partager l\'aperçu');
       return;
     }
@@ -76,13 +134,13 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
       setShareStep('✅ Aperçu capturé !');
       
       // Ouvrir le client mail par défaut
-      const mailtoLink = `mailto:${invoice.client.email}?subject=Aperçu facture MYCONFORT n°${invoice.invoiceNumber}&body=Bonjour ${invoice.client.name},%0D%0A%0D%0AVeuillez trouver ci-joint l'aperçu de votre facture n°${invoice.invoiceNumber}.%0D%0A%0D%0ACordialement,%0D%0A${invoice.advisorName || 'MYCONFORT'}`;
+      const mailtoLink = `mailto:${invoice.clientEmail}?subject=Aperçu facture MYCONFORT n°${invoice.invoiceNumber}&body=Bonjour ${invoice.clientName},%0D%0A%0D%0AVeuillez trouver ci-joint l'aperçu de votre facture n°${invoice.invoiceNumber}.%0D%0A%0D%0ACordialement,%0D%0AMYCONFORT`;
       
       window.open(mailtoLink, '_blank');
       
       const successMessage = `✅ Aperçu capturé avec succès !\n\n` +
         `📸 Image enregistrée sur votre appareil\n` +
-        `📧 Client mail ouvert pour envoi à ${invoice.client.email}\n\n` +
+        `📧 Client mail ouvert pour envoi à ${invoice.clientEmail}\n\n` +
         `Joignez manuellement l'image téléchargée à votre email.`;
       
       alert(successMessage);
@@ -135,8 +193,8 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden">
-        {/* Header */}
-        <div className="flex justify-between items-center p-4 border-b bg-blue-600 text-white">
+        {/* Header - no-print pour masquer à l'impression */}
+        <div className="no-print flex justify-between items-center p-4 border-b bg-blue-600 text-white">
           <div className="flex items-center space-x-3">
             <FileText className="w-6 h-6" />
             <h3 className="text-xl font-bold">Aperçu de la facture {invoice.invoiceNumber}</h3>
@@ -171,9 +229,9 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
             {/* Bouton partage aperçu */}
             <button
               onClick={handleSharePreviewViaEmail}
-              disabled={isSharing || !invoice.client.email}
+              disabled={isSharing || !invoice.clientEmail}
               className="bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 disabled:from-gray-400 disabled:to-gray-500 text-white px-4 py-2 rounded-lg flex items-center space-x-2 font-semibold transition-all hover:scale-105 disabled:hover:scale-100 disabled:opacity-50"
-              title={!invoice.client.email ? "Veuillez renseigner l'email du client" : "Capturer cet aperçu et l'envoyer par email"}
+              title={!invoice.clientEmail ? "Veuillez renseigner l'email du client" : "Capturer cet aperçu et l'envoyer par email"}
             >
               {isSharing ? (
                 <>
@@ -213,7 +271,7 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
 
         {/* Indicateur de partage en cours */}
         {isSharing && shareStep && (
-          <div className="bg-purple-50 border-b border-purple-200 p-3">
+          <div className="no-print bg-purple-50 border-b border-purple-200 p-3">
             <div className="flex items-center space-x-3">
               <Loader className="w-5 h-5 animate-spin text-purple-600" />
               <div>
@@ -226,7 +284,7 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
 
         {/* Indicateur d'upload en cours */}
         {isUploading && uploadStep && (
-          <div className="bg-blue-50 border-b border-blue-200 p-3">
+          <div className="no-print bg-blue-50 border-b border-blue-200 p-3">
             <div className="flex items-center space-x-3">
               <Loader className="w-5 h-5 animate-spin text-blue-600" />
               <div>
@@ -238,12 +296,12 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
         )}
 
         {/* Instructions pour le partage */}
-        <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border-b p-3">
+        <div className="no-print bg-gradient-to-r from-purple-50 to-indigo-50 border-b p-3">
           <div className="flex items-center space-x-2 text-sm">
             <Share2 className="w-4 h-4 text-purple-600" />
             <span className="font-semibold text-purple-900">Partage d'aperçu :</span>
             <span className="text-purple-800">
-              {invoice.client.email 
+              {invoice.clientEmail 
                 ? "Cliquez sur \"Partager Aperçu\" pour capturer et envoyer par email"
                 : "⚠️ Email client requis pour le partage d'aperçu"
               }
@@ -258,7 +316,7 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
         </div>
 
         {/* Instructions pour Google Drive */}
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b p-3">
+        <div className="no-print bg-gradient-to-r from-blue-50 to-indigo-50 border-b p-3">
           <div className="flex items-center space-x-2 text-sm">
             <CloudUpload className="w-4 h-4 text-blue-600" />
             <span className="font-semibold text-blue-900">Google Drive :</span>
@@ -275,7 +333,7 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
         </div>
 
         {/* Content */}
-        <div className="overflow-auto max-h-[calc(90vh-220px)] bg-gray-100 p-4">
+        <div className="no-print overflow-auto max-h-[calc(90vh-220px)] bg-gray-100 p-4">
           <div id="pdf-preview-content">
             <InvoicePreview invoice={invoice} className="print-preview" />
           </div>

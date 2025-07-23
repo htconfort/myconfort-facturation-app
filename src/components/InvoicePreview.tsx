@@ -114,48 +114,17 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
             <span className="info-label">Méthode de paiement:</span>
             <span className="info-value">{invoice.paymentMethod || 'Non spécifié'}</span>
           </div>
-          
-          {/* Signature Client - Rectangle au-dessus modalités */}
-          <div className="signature-payment-box">
-            <div className="signature-payment-header">SIGNATURE CLIENT</div>
-            <div className="signature-payment-content">
-              {invoice.signature ? (
-                <>
-                  <img src={invoice.signature} alt="Signature électronique" className="signature-payment-image" />
-                  <div className="signature-payment-status">✓ Signature électronique enregistrée</div>
-                  <div className="signature-payment-date">Signée le {new Date().toLocaleDateString('fr-FR')}</div>
-                </>
-              ) : (
-                <div className="signature-payment-placeholder">En attente de signature</div>
-              )}
-            </div>
-          </div>
         </section>
 
         {/* Products Section */}
         <section className="products-section">
           <div className="products-title">Produits & Tarification</div>
           
-          {/* Signature Box */}
+          {/* Signature Box - Version compacte */}
           {invoice.signature && (
-            <div className="signature-box">
-              <div className="signature-label">SIGNATURE CLIENT</div>
-              <div className="signature-placeholder">
-                <img src={invoice.signature} alt="Signature électronique" style={{ maxHeight: '60px' }} />
-                
-                {/* Mention légale Article L224‑59 */}
-                <div className="mt-3 bg-red-600 border border-red-400 rounded-lg p-3">
-                  <div className="text-white">
-                    <div className="font-bold text-xs mb-1 flex items-center">
-                      <span className="mr-1">⚖️</span>
-                      Article L224‑59 du Code de la consommation
-                    </div>
-                    <div className="text-xs font-bold leading-relaxed">
-                      « Avant la conclusion de tout contrat entre un consommateur et un professionnel à l'occasion d'une foire, d'un salon […] le professionnel informe le consommateur qu'il ne dispose pas d'un délai de rétractation. »
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div className="signature-box-compact">
+              <div className="signature-label-small">Signature client:</div>
+              <img src={invoice.signature} alt="Signature électronique" className="signature-compact" />
             </div>
           )}
 
@@ -264,6 +233,99 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
           <p>88 Avenue des Ternes, 75017 Paris - Tél: 04 68 50 41 45</p>
           <p>Email: myconfort@gmail.com - SIRET: 824 313 530 00027</p>
         </footer>
+      </div>
+
+      {/* PAGE 2 - CONDITIONS GÉNÉRALES DE VENTE */}
+      <div className="conditions-page">
+        <h1>CONDITIONS GÉNÉRALES DE VENTE</h1>
+        
+        <h2>1. DÉFINITIONS</h2>
+        <p>
+          Les présentes conditions générales de vente s'appliquent à toutes les ventes conclues par la société MYCONFORT, 
+          SARL au capital de 5000€, immatriculée au RCS de Paris sous le numéro 824 313 530, 
+          dont le siège social est situé 88 Avenue des Ternes, 75017 Paris.
+        </p>
+
+        <h2>2. PRIX ET MODALITÉS DE PAIEMENT</h2>
+        <h3>2.1 Prix</h3>
+        <p>
+          Les prix sont exprimés en euros toutes taxes comprises. Ils sont fermes et non révisables 
+          pendant leur durée de validité mais la société MYCONFORT se réserve le droit de les modifier 
+          à tout moment pour les commandes ultérieures.
+        </p>
+        
+        <h3>2.2 Modalités de paiement</h3>
+        <p>Le règlement s'effectue :</p>
+        <ul>
+          <li>Comptant à la commande par chèque, espèces ou virement bancaire</li>
+          <li>En plusieurs fois selon accord préalable</li>
+          <li>Un acompte peut être demandé à la commande</li>
+        </ul>
+
+        <h2>3. LIVRAISON</h2>
+        <h3>3.1 Délais de livraison</h3>
+        <p>
+          Les délais de livraison sont donnés à titre indicatif. Ils ne constituent pas un engagement 
+          ferme de la part de MYCONFORT. Les retards de livraison ne donnent pas droit à dommages et intérêts.
+        </p>
+        
+        <h3>3.2 Transport et risques</h3>
+        <p>
+          La marchandise voyage aux risques et périls de l'acheteur. Les réclamations concernant 
+          les avaries ou manquants lors du transport doivent être formulées auprès du transporteur 
+          dans les 48 heures suivant la livraison.
+        </p>
+
+        <h2>4. GARANTIES</h2>
+        <h3>4.1 Garantie légale</h3>
+        <p>
+          Tous nos produits bénéficient de la guarantee légale de conformité et de la garantie contre 
+          les vices cachés prévues par le Code de la consommation.
+        </p>
+        
+        <h3>4.2 Garantie commerciale</h3>
+        <p>
+          Une garantie commerciale spécifique peut s'appliquer selon les produits. 
+          Les modalités vous sont communiquées lors de la vente.
+        </p>
+
+        <h2>5. DROIT DE RÉTRACTATION</h2>
+        <p>
+          Conformément aux dispositions du Code de la consommation, vous disposez d'un délai 
+          de 14 jours à compter de la réception de votre commande pour exercer votre droit de rétractation 
+          sans avoir à justifier de motifs ni à payer de pénalités.
+        </p>
+
+        <h2>6. RÉCLAMATIONS</h2>
+        <p>
+          Toute réclamation doit être adressée par écrit à MYCONFORT dans un délai maximum de 8 jours 
+          après livraison. Passé ce délai, aucune réclamation ne sera prise en compte.
+        </p>
+
+        <h2>7. CLAUSE DE RÉSERVE DE PROPRIÉTÉ</h2>
+        <p>
+          La société MYCONFORT conserve la propriété des biens vendus jusqu'au paiement intégral 
+          du prix en principal et accessoires.
+        </p>
+
+        <h2>8. DONNÉES PERSONNELLES</h2>
+        <p>
+          Conformément à la loi "Informatique et Libertés" et au RGPD, vous disposez d'un droit d'accès, 
+          de rectification et de suppression des données vous concernant. 
+          Ces données sont utilisées uniquement dans le cadre de la relation commerciale.
+        </p>
+
+        <h2>9. LITIGES</h2>
+        <p>
+          En cas de litige, une solution amiable sera recherchée avant toute action judiciaire. 
+          À défaut, les tribunaux de Paris seront seuls compétents.
+        </p>
+
+        <h2>10. ACCEPTATION</h2>
+        <p>
+          Le fait de passer commande implique l'acceptation pleine et entière des présentes 
+          conditions générales de vente.
+        </p>
       </div>
     </div>
   );
