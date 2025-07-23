@@ -34,6 +34,7 @@ export const productCatalog: ProductCatalog[] = [
   { category: 'Oreillers', name: 'Oreiller Dual', priceTTC: 60, autoCalculateHT: true },
   { category: 'Oreillers', name: 'Oreiller Panama', priceTTC: 70, autoCalculateHT: true },
   { category: 'Oreillers', name: 'Oreiller Papillon', priceTTC: 80, autoCalculateHT: true },
+  { category: 'Oreillers', name: 'Oreiller Voyage', priceTTC: 35, autoCalculateHT: true },
   { category: 'Oreillers', name: 'Traversin 140', priceTTC: 140, autoCalculateHT: true },
   { category: 'Oreillers', name: 'Traversin 160', priceTTC: 160, autoCalculateHT: true },
   { category: 'Oreillers', name: 'Pack divers', price: 0, priceTTC: 0, autoCalculateHT: false },
