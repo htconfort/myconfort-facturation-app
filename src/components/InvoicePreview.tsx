@@ -17,7 +17,7 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
       product.quantity,
       product.priceTTC,
       product.discount,
-      product.discountType
+      product.discountType === 'percentage' ? 'percent' : 'fixed'
     );
   }, 0);
 
@@ -34,7 +34,7 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
       product.quantity,
       product.priceTTC,
       product.discount,
-      product.discountType
+      product.discountType === 'percentage' ? 'percent' : 'fixed'
     );
     return sum + (originalTotal - discountedTotal);
   }, 0);
@@ -183,7 +183,7 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
                   product.quantity,
                   product.priceTTC,
                   product.discount,
-                  product.discountType
+                  product.discountType === 'percentage' ? 'percent' : 'fixed'
                 );
                 
                 return (
@@ -193,7 +193,7 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
                     <td>{formatCurrency(product.priceTTC)}</td>
                     <td>
                       {product.discount > 0 ? (
-                        product.discountType === 'percent' ? 
+                        product.discountType === 'percentage' ? 
                           `${product.discount}%` : 
                           formatCurrency(product.discount)
                       ) : '-'}
