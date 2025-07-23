@@ -57,6 +57,8 @@ export const productCatalog: ProductCatalog[] = [
   { category: 'Pack', name: 'PACK 2 TAIES OREILLER rectangle blanche dual', priceTTC: 15, autoCalculateHT: true },
   { category: 'Pack', name: 'PACK 2 TAIES OREILLER rectangle blanche douceur', priceTTC: 15, autoCalculateHT: true },
   { category: 'Pack', name: 'Pack de 2 oreillers', priceTTC: 100, autoCalculateHT: true },
+  { category: 'Pack', name: 'Pack 2 oreillers douceur', priceTTC: 150, autoCalculateHT: true },
+  { category: 'Pack', name: 'Pack 2 oreillers panama', priceTTC: 130, autoCalculateHT: true },
   
   // Divers
   { category: 'Divers', name: 'Produit personnalisé', price: 0, priceTTC: 0, autoCalculateHT: false },
