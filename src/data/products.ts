@@ -50,6 +50,7 @@ export const productCatalog: ProductCatalog[] = [
   { category: 'Plateau', name: 'PLATEAU PRESTIGE 160 x 200', priceTTC: 210, autoCalculateHT: true },
   { category: 'Plateau', name: 'PLATEAU PRESTIGE 180 x 200', priceTTC: 220, autoCalculateHT: true },
   { category: 'Plateau', name: 'PLATEAU PRESTIGE 200 x 200', priceTTC: 230, autoCalculateHT: true },
+  { category: 'Accessoires', name: 'Régule-jambes', priceTTC: 70, autoCalculateHT: true },
   { category: 'Accessoires', name: 'Protège-matelas', price: 0, priceTTC: 0, autoCalculateHT: false },
   { category: 'Accessoires', name: 'Housse de couette', price: 0, priceTTC: 0, autoCalculateHT: false },
   { category: 'Accessoires', name: 'Taie d\'oreiller', price: 0, priceTTC: 0, autoCalculateHT: false }
