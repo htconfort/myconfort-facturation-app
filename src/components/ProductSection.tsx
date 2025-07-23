@@ -175,6 +175,9 @@ export const ProductSection: React.FC<ProductSectionProps> = ({
 
     const selectedCatalogProduct = productCatalog.find(p => p.name === newProduct.name);
     
+    // Pour la catégorie "Diverse", on n'utilise pas autoCalculateHT du catalogue
+    const isCustomProduct = newProduct.category === 'Diverse';
+    
     const product: Product = {
       id: Date.now().toString(),
       name: newProduct.name,
@@ -184,7 +187,7 @@ export const ProductSection: React.FC<ProductSectionProps> = ({
       priceTTC: newProduct.priceTTC,
       discount: 0,
       discountType: 'percent',
-      autoCalculateHT: selectedCatalogProduct?.autoCalculateHT
+      autoCalculateHT: isCustomProduct ? false : (selectedCatalogProduct?.autoCalculateHT || false)
     };
 
     // Check if product already exists
@@ -198,6 +201,7 @@ export const ProductSection: React.FC<ProductSectionProps> = ({
       onUpdate(updatedProducts);
     } else {
       onUpdate([...products, product]);
+    }
     }
 
     // Reset form
@@ -266,21 +270,35 @@ export const ProductSection: React.FC<ProductSectionProps> = ({
             
             <div className="md:col-span-4">
               <label className="block text-black font-bold mb-1">Produit</label>
-              <select
-                value={newProduct.name}
-                onChange={(e) => handleProductChange(e.target.value)}
-                className="w-full border-2 border-[#477A0C] rounded-lg px-3 py-2 bg-white font-bold focus:border-[#F55D3E] focus:ring-2 focus:ring-[#89BBFE] transition-all text-black"
-                disabled={!newProduct.category}
-              >
-                <option value="">
-                  {newProduct.category ? 'Sélectionner un produit' : 'Sélectionner une catégorie d\'abord'}
-                </option>
-                {filteredProducts.map(product => (
-                  <option key={product.name} value={product.name}>
-                    {product.name}
+              {newProduct.category === 'Diverse' ? (
+                <input
+                  type="text"
+                  value={newProduct.name}
+                  onChange={(e) => setNewProduct({
+                    ...newProduct,
+                    name: e.target.value
+                  })}
+                  placeholder="Saisir le nom du produit..."
+                  className="w-full border-2 border-[#477A0C] rounded-lg px-3 py-2 bg-white font-bold focus:border-[#F55D3E] focus:ring-2 focus:ring-[#89BBFE] transition-all text-black"
+                  disabled={!newProduct.category}
+                />
+              ) : (
+                <select
+                  value={newProduct.name}
+                  onChange={(e) => handleProductChange(e.target.value)}
+                  className="w-full border-2 border-[#477A0C] rounded-lg px-3 py-2 bg-white font-bold focus:border-[#F55D3E] focus:ring-2 focus:ring-[#89BBFE] transition-all text-black"
+                  disabled={!newProduct.category}
+                >
+                  <option value="">
+                    {newProduct.category ? 'Sélectionner un produit' : 'Sélectionner une catégorie d\'abord'}
                   </option>
-                ))}
-              </select>
+                  {filteredProducts.map(product => (
+                    <option key={product.name} value={product.name}>
+                      {product.name}
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
             
             <div className="md:col-span-2">

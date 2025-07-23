@@ -58,6 +58,9 @@ export const productCatalog: ProductCatalog[] = [
   { category: 'Autres', name: 'PACK 2 TAIES OREILLER rectangle blanche dual', priceTTC: 15, autoCalculateHT: true },
   { category: 'Autres', name: 'PACK 2 TAIES OREILLER rectangle blanche douceur', priceTTC: 15, autoCalculateHT: true },
   
+  // Diverse
+  { category: 'Diverse', name: 'Produit personnalisé', price: 0, priceTTC: 0, autoCalculateHT: false },
+  
   // Accessoires
   { category: 'Accessoires', name: 'Régule-jambes', priceTTC: 70, autoCalculateHT: true },
   { category: 'Accessoires', name: 'Protège-matelas', price: 0, priceTTC: 0, autoCalculateHT: false },
@@ -72,5 +75,6 @@ export const productCategories = [
   'Oreillers',
   'Plateau',
   'Autres',
+  'Diverse',
   'Accessoires'
 ];
