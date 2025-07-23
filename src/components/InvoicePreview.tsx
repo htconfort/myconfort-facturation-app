@@ -1,6 +1,7 @@
 import React from 'react';
 import { Invoice } from '../types';
 import { formatCurrency, calculateProductTotal } from '../utils/calculations';
+import { ConditionsGenerales } from './ConditionsGenerales';
 
 interface InvoicePreviewProps {
   invoice: Invoice;
@@ -42,11 +43,11 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
   return (
     <div 
       id="facture-apercu" 
-      className={`facture-apercu ${className}`}
+      className={`facture-apercu compact-spacing ${className}`}
     >
       <div className="invoice-container">
         {/* Header */}
-        <header className="header">
+        <header className="invoice-header">
           <div>
             <h1>MYCONFORT</h1>
             <p className="subtitle">Facturation professionnelle avec signature électronique</p>
@@ -280,6 +281,9 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
           <p>Email: myconfort@gmail.com - SIRET: 824 313 530 00027</p>
         </footer>
       </div>
+      
+      {/* Conditions générales sur page séparée pour l'impression */}
+      <ConditionsGenerales />
     </div>
   );
 };

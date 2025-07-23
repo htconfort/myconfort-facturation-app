@@ -13,12 +13,12 @@
     padding: 0 !important;
     background: white !important;
     font-family: 'Inter', Arial, sans-serif !important;
-    font-size: 12px !important;
-    line-height: 1.4 !important;
+    font-size: 11px !important;
+    line-height: 1.3 !important;
     color: #000 !important;
   }
   
-  /* Masquer les éléments non imprimables */
+  /* Masquer TOUS les éléments non imprimables */
   .no-print,
   .no-print *,
   button,
@@ -33,18 +33,77 @@
   header,
   footer,
   .header,
-  .footer {
+  .footer,
+  /* Masquer spécifiquement les éléments indésirables du modal */
+  .modal-overlay,
+  .modal-header,
+  .modal-footer,
+  .share-section,
+  .upload-section,
+  .progress-section,
+  .action-buttons,
+  .close-button,
+  /* Masquer tous les éléments d'interface */
+  [class*="lucide"],
+  .icon,
+  .loading,
+  .loader,
+  /* Masquer les sections de partage et upload par couleur de fond */
+  .bg-purple-50,
+  .bg-blue-50,
+  .bg-green-50,
+  .bg-gradient-to-r,
+  /* Masquer les éléments avec du texte spécifique */
+  .text-purple-900,
+  .text-blue-900,
+  .text-green-600,
+  /* Masquer les boutons et contrôles */
+  [role="button"],
+  input[type="button"],
+  input[type="submit"],
+  /* Masquer les indicateurs de format et téléchargement */
+  .format-info,
+  .download-info,
+  .auto-info,
+  /* Masquer tout ce qui contient des flex avec espacement (probablement des interfaces) */
+  .flex.items-center.space-x-3:not(.signature-box *),
+  .flex.items-center.space-x-2:not(.signature-box *),
+  /* Masquer les divs avec des classes d'interface spécifiques */
+  div[class*="overflow-auto"]:not(#pdf-preview-content):not(.signature-box),
+  div[class*="bg-gray-100"]:not(#pdf-preview-content):not(.signature-box),
+  /* Masquer tout sauf le contenu de la facture */
+  body > *:not([id="pdf-preview-content"]):not(.facture-apercu):not(.invoice-container) {
     display: none !important;
     visibility: hidden !important;
   }
   
-  /* Page A4 exacte */
+  /* S'assurer que seul le contenu principal est visible */
+  #pdf-preview-content,
+  #pdf-preview-content *,
+  .facture-apercu,
+  .facture-apercu *,
+  .invoice-container,
+  .invoice-container * {
+    display: block !important;
+    visibility: visible !important;
+  }
+  
+  /* Re-masquer les éléments spécifiques même dans le contenu principal */
+  #pdf-preview-content .no-print,
+  .facture-apercu .no-print,
+  .invoice-container .no-print {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  
+  /* Page A4 optimisée */
   .invoice-page,
   .facture-apercu,
-  .invoice-container {
-    width: 21cm !important;
-    min-height: 29.7cm !important;
-    max-width: 21cm !important;
+  .invoice-container,
+  #pdf-preview-content {
+    width: 19cm !important;
+    min-height: 27cm !important;
+    max-width: 19cm !important;
     margin: 0 auto !important;
     padding: 1cm !important;
     background: white !important;
@@ -54,9 +113,29 @@
   }
   
   /* Forcer l'affichage des éléments imprimables */
-  .print-only {
+  .print-only,
+  .facture-apercu,
+  .invoice-container,
+  #pdf-preview-content,
+  .signature-box,
+  .signature-image,
+  .signature-pad canvas {
     display: block !important;
     visibility: visible !important;
+  }
+  
+  /* Styles pour les en-têtes de facture */
+  .invoice-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-bottom: 20px !important;
+    page-break-after: avoid;
+  }
+  
+  .company-logo {
+    max-width: 150px !important;
+    max-height: 80px !important;
   }
   
   /* Styles pour les titres */
@@ -66,30 +145,139 @@
     margin-top: 0 !important;
   }
   
+  h1 {
+    font-size: 24px !important;
+    margin-bottom: 10px !important;
+  }
+  
+  h2 {
+    font-size: 18px !important;
+    margin-bottom: 8px !important;
+  }
+  
+  /* Styles pour les sections d'information */
+  .info-section {
+    margin: 15px 0 !important;
+    page-break-inside: avoid !important;
+  }
+  
+  .info-header {
+    background-color: #477A0C !important;
+    color: white !important;
+    padding: 8px 12px !important;
+    margin-bottom: 8px !important;
+    font-weight: bold !important;
+    font-size: 12px !important;
+  }
+  
+  .info-row {
+    display: flex !important;
+    margin-bottom: 5px !important;
+  }
+  
+  .info-label {
+    font-weight: bold !important;
+    width: 40% !important;
+    color: #333 !important;
+  }
+  
+  .info-value {
+    width: 60% !important;
+    color: #000 !important;
+  }
+  
+  /* Styles pour les titres */
+  h1, h2, h3, h4, h5, h6 {
+    color: #477A0C !important;
+    page-break-after: avoid;
+    margin-top: 0 !important;
+  }
+  
+  
   /* Styles pour les tableaux */
   table {
     width: 100% !important;
     border-collapse: collapse !important;
     page-break-inside: avoid;
-    margin: 10px 0 !important;
+    margin: 15px 0 !important;
+    font-size: 10px !important;
   }
   
   table th {
     background-color: #477A0C !important;
     color: white !important;
-    padding: 8px !important;
+    padding: 6px !important;
     border: 1px solid #333 !important;
     font-weight: bold !important;
+    font-size: 10px !important;
   }
   
   table td {
-    padding: 6px 8px !important;
+    padding: 4px 6px !important;
     border: 1px solid #ddd !important;
     vertical-align: top !important;
+    font-size: 9px !important;
   }
   
   table tr:nth-child(even) {
     background-color: #f8f9fa !important;
+  }
+  
+  /* Styles pour les totaux */
+  .totals-section {
+    background: #f8f9fa !important;
+    border: 1px solid #ddd !important;
+    padding: 10px !important;
+    margin: 15px 0 !important;
+    page-break-inside: avoid !important;
+  }
+  
+  .total-row {
+    display: flex !important;
+    justify-content: space-between !important;
+    margin-bottom: 5px !important;
+  }
+  
+  .total-final {
+    background-color: #477A0C !important;
+    color: white !important;
+    padding: 8px !important;
+    font-weight: bold !important;
+    font-size: 14px !important;
+    margin-top: 10px !important;
+  }
+  
+  /* Styles spécifiques pour la signature */
+  .signature-box {
+    border: 2px solid #477A0C !important;
+    padding: 15px !important;
+    margin: 20px 0 !important;
+    background: #f8f9fa !important;
+    page-break-inside: avoid !important;
+    display: block !important;
+    visibility: visible !important;
+  }
+  
+  .signature-box img,
+  .signature-image,
+  .signature-pad canvas {
+    max-width: 300px !important;
+    max-height: 100px !important;
+    display: block !important;
+    visibility: visible !important;
+    margin: 10px 0 !important;
+  }
+  
+  .signature-label {
+    font-weight: bold !important;
+    color: #477A0C !important;
+    margin-bottom: 10px !important;
+    font-size: 12px !important;
+  }
+  
+  .signature-status {
+    color: #477A0C !important;
+    font-weight: bold !important;
   }
   
   /* Éviter les coupures de page */
@@ -235,33 +423,20 @@
     display: none !important;
   }
   
-  /* Configuration de page */
+  /* Configuration de page optimisée */
   @page {
     size: A4;
-    margin: 1cm;
-    
-    @top-center {
-      content: "MYCONFORT - Facture";
-      font-size: 10px;
-      color: #666;
-    }
-    
-    @bottom-center {
-      content: "Page " counter(page) " sur " counter(pages);
-      font-size: 10px;
-      color: #666;
-    }
+    margin: 0.5cm;
   }
   
   /* Première page sans en-tête */
   @page :first {
-    @top-center {
-      content: none;
-    }
+    margin: 0.5cm;
   }
   
   /* Forcer les sauts de page appropriés */
-  .page-break-before {
+  .page-break-before,
+  .conditions-generales {
     page-break-before: always !important;
   }
   
@@ -269,8 +444,33 @@
     page-break-after: always !important;
   }
   
-  .page-break-avoid {
+  .page-break-avoid,
+  .signature-section,
+  .totals-section,
+  .client-info,
+  .company-info {
     page-break-inside: avoid !important;
+  }
+  
+  /* Réduire l'espacement pour tout faire tenir sur une page */
+  .compact-spacing {
+    margin: 5px 0 !important;
+    padding: 3px 0 !important;
+  }
+  
+  .compact-spacing h1,
+  .compact-spacing h2,
+  .compact-spacing h3 {
+    margin: 5px 0 !important;
+  }
+  
+  .compact-spacing .info-section {
+    margin: 8px 0 !important;
+  }
+  
+  .compact-spacing .info-header {
+    padding: 5px 8px !important;
+    margin-bottom: 5px !important;
   }
 }
 
