@@ -19,7 +19,7 @@ export const InvoicePDF = React.forwardRef<HTMLDivElement, InvoicePDFProps>(
           product.quantity,
           product.priceTTC,
           product.discount,
-          product.discountType
+          product.discountType === 'percentage' ? 'percent' : 'fixed'
         );
       }, 0);
 
@@ -29,7 +29,7 @@ export const InvoicePDF = React.forwardRef<HTMLDivElement, InvoicePDFProps>(
           product.quantity,
           product.priceTTC,
           product.discount,
-          product.discountType
+          product.discountType === 'percentage' ? 'percent' : 'fixed'
         );
         return sum + (originalTotal - discountedTotal);
       }, 0);
@@ -59,10 +59,23 @@ export const InvoicePDF = React.forwardRef<HTMLDivElement, InvoicePDFProps>(
             {/* Informations entreprise */}
             <div className="flex-1">
               <div className="text-center"> {/* Ajout de text-center */}
+                <img 
+                  src="/HT-Confort_Full_Green.svg" 
+                  alt="HT-Confort Logo" 
+                  className="company-logo"
+                  style={{ 
+                    maxWidth: '200px', 
+                    maxHeight: '100px', 
+                    margin: '0 auto 10px auto',
+                    display: 'block'
+                  }}
+                />
+                <p className="text-2xl font-caveat" style={{ color: '#477A0C', fontStyle: 'italic', fontWeight: '500', margin: '0 0 15px 0' }}>
+                  Quand on dort bien, on vit bien
+                </p>
                 <h1 className="text-6xl font-black text-[#477A0C] tracking-tight"> {/* Taille de police augmentée à text-6xl */}
                   MYCONFORT
                 </h1>
-                <p className="text-4xl font-caveat" style={{ color: '#080F0F' }}>Quand on dort bien, on vit bien.</p> {/* Nouvelle phrase avec police manuscrite, taille augmentée à text-4xl */}
               </div>
               
               <div className="text-sm space-y-0.5 mt-3" style={{ color: '#080F0F' }}> {/* Changé de text-xs à text-sm */}
@@ -215,7 +228,7 @@ export const InvoicePDF = React.forwardRef<HTMLDivElement, InvoicePDFProps>(
                         product.quantity,
                         product.priceTTC,
                         product.discount,
-                        product.discountType
+                        product.discountType === 'percentage' ? 'percent' : 'fixed'
                       ))}
                     </td>
                   </tr>

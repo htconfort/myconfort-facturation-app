@@ -12,7 +12,7 @@ import { GoogleDriveModal } from './components/GoogleDriveModal';
 import { PayloadDebugModal } from './components/PayloadDebugModal';
 import { DebugCenter } from './components/DebugCenter';
 import { SignaturePad } from './components/SignaturePad';
-import { InvoicePDF } from './components/InvoicePDF';
+import { InvoicePreview } from './components/InvoicePreview';
 import { Toast } from './components/ui/Toast';
 import { Invoice, Client, ToastType } from './types';
 import { generateInvoiceNumber } from './utils/calculations';
@@ -618,10 +618,10 @@ function App() {
           onShowEmailJSConfig={() => setShowEmailJSConfig(true)}
         /> */}
 
-        {/* Hidden InvoicePDF for PDF generation */}
+        {/* Hidden InvoicePreview for PDF generation */}
         <div style={{ display: 'none' }}>
           <div ref={previewRef}>
-            <InvoicePDF invoice={invoice} isPreview={true} />
+            <InvoicePreview invoice={invoice} className="pdf-generation" />
           </div>
         </div>
 
@@ -645,7 +645,7 @@ function App() {
             {/* Ajout de l'ID pour la référence unique */}
             <div id="invoice-preview-section" className="bg-[#F2EFE2] rounded-lg p-4">
               <div className="border border-gray-300 rounded-lg overflow-hidden">
-                <InvoicePDF invoice={invoice} isPreview={true} />
+                <InvoicePreview invoice={invoice} className="main-preview" />
               </div>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Download, Printer, FileText, Share2, Loader, UploadCloud as CloudUpload } from 'lucide-react';
-import { InvoicePDF } from './InvoicePDF';
+import { InvoicePreview } from './InvoicePreview';
 import { Invoice } from '../types';
 import html2canvas from 'html2canvas';
 import { AdvancedPDFService } from '../services/advancedPdfService';
@@ -277,7 +277,7 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
         {/* Content */}
         <div className="overflow-auto max-h-[calc(90vh-220px)] bg-gray-100 p-4">
           <div id="pdf-preview-content">
-            <InvoicePDF invoice={invoice} isPreview={true} />
+            <InvoicePreview invoice={invoice} className="print-preview" />
           </div>
         </div>
       </div>
