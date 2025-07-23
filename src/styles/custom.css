@@ -622,225 +622,161 @@
 }
 
 /* ==============================================
-   NOUVEAU FORMAT PROFESSIONNEL MYCONFORT
+   STYLES FACTURE MYCONFORT - REPRODUCTION EXACTE DU MODÈLE
    ============================================== */
 
-/* En-tête centré avec logo */
-.invoice-header-center {
-  text-align: center;
-  margin-bottom: 30px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #ddd;
+.myconfort-invoice {
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #333;
+  background: white;
+  max-width: 210mm;
+  margin: 0 auto;
 }
 
-.company-branding {
+.invoice-page {
+  padding: 15mm;
+  background: white;
+  min-height: 297mm;
+}
+
+/* EN-TÊTE */
+.header-section {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  gap: 20px;
 }
 
-.company-logo-center {
-  max-width: 150px;
+.company-info-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  flex: 1;
+}
+
+.company-logo {
+  max-width: 120px;
   max-height: 80px;
   object-fit: contain;
 }
 
-.company-name {
-  font-size: 32px;
+.company-details {
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+.company-details strong {
+  font-size: 12px;
   font-weight: bold;
-  color: var(--mycomfort-green);
-  margin: 0;
-  letter-spacing: 1px;
 }
 
-.company-tagline {
-  font-style: italic;
-  color: var(--mycomfort-green);
-  font-size: 16px;
-  margin: 0;
-  font-weight: 500;
+/* CADRE FACTURE VERT */
+.invoice-header-box {
+  background: #7CB342;
+  color: white;
+  padding: 15px;
+  border-radius: 5px;
+  min-width: 250px;
+  text-align: center;
 }
 
-/* Ligne d'informations entreprise/facture */
-.header-info-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 30px;
-  gap: 40px;
-}
-
-.company-details-left {
-  flex: 1;
-}
-
-.company-details-left h3 {
+.facture-title {
   font-size: 18px;
   font-weight: bold;
-  color: var(--mycomfort-green);
-  margin: 0 0 10px 0;
+  margin-bottom: 10px;
 }
 
-.company-details-left p {
-  margin: 3px 0;
-  font-size: 13px;
-  color: #666;
-}
-
-.invoice-info-right {
-  flex: 1;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.invoice-number-box {
-  background: #f8f9fa;
-  border: 2px solid var(--mycomfort-green);
-  border-radius: 8px;
-  padding: 20px;
-  text-align: center;
-  min-width: 200px;
-}
-
-.invoice-number-box h2 {
-  font-size: 24px;
-  font-weight: bold;
-  color: var(--mycomfort-green);
-  margin: 0 0 15px 0;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.invoice-meta {
+.invoice-details {
   text-align: left;
+  margin-bottom: 10px;
 }
 
-.meta-line {
+.invoice-details div {
+  margin: 3px 0;
+  font-size: 11px;
+}
+
+.legal-mention-header {
+  font-size: 9px;
+  text-align: left;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255,255,255,0.3);
+}
+
+/* SECTION PRINCIPALE (2 colonnes) */
+.main-content-row {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 8px;
-  font-size: 13px;
+  gap: 20px;
+  margin-bottom: 20px;
 }
 
-.meta-line strong {
-  color: #666;
-  min-width: 50px;
-}
-
-/* Section client dans un cadre */
-.client-section-box {
-  background: #f1f8e9;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 20px;
-  margin-bottom: 25px;
+.client-section, .additional-info-section {
+  flex: 1;
 }
 
 .section-title {
-  font-size: 16px;
+  padding: 6px 10px;
   font-weight: bold;
-  color: var(--mycomfort-green);
-  margin: 0 0 15px 0;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-size: 11px;
+  color: white;
+  margin-bottom: 10px;
 }
 
-.client-details {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.green-bg {
+  background: #7CB342;
 }
 
-.client-name-prominent {
-  font-size: 18px;
+.client-info, .additional-info {
+  font-size: 11px;
+  line-height: 1.4;
+  padding: 5px;
+}
+
+.client-info strong, .additional-info strong {
   font-weight: bold;
-  color: var(--mycomfort-green);
 }
 
-.client-address p {
-  margin: 2px 0;
-  font-size: 14px;
-  color: #333;
+/* SECTION PRODUITS */
+.products-section {
+  margin-bottom: 20px;
 }
 
-/* Paiement et livraison en ligne */
-.payment-delivery-row {
-  display: flex;
-  gap: 40px;
-  margin-bottom: 25px;
-  padding: 15px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  border-left: 4px solid var(--mycomfort-green);
-}
-
-.payment-col, .delivery-col {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.payment-col strong, .delivery-col strong {
-  color: var(--mycomfort-green);
-  font-size: 14px;
-}
-
-.payment-col span, .delivery-col span {
-  font-size: 13px;
-  color: #333;
-}
-
-.delivery-note {
-  font-size: 12px !important;
-  color: #666 !important;
-  font-style: italic;
-  margin-top: 5px;
-}
-
-/* Nouveau tableau des produits */
-.products-section-new {
-  margin-bottom: 30px;
-}
-
-.products-table-modern {
+.products-table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  border-radius: 8px;
-  overflow: hidden;
+  margin-top: 10px;
+  border: 1px solid #ddd;
 }
 
-.products-table-modern th {
-  background: linear-gradient(135deg, var(--mycomfort-green), var(--mycomfort-green-light));
+.table-header th {
+  background: #7CB342;
   color: white;
-  padding: 12px 8px;
-  text-align: left;
-  font-weight: 600;
-  font-size: 12px;
-  border: none;
+  padding: 8px 5px;
+  text-align: center;
+  font-size: 10px;
+  font-weight: bold;
+  border: 1px solid #5a9e2d;
 }
 
-.products-table-modern td {
-  padding: 10px 8px;
-  border-bottom: 1px solid #eee;
-  font-size: 12px;
-  vertical-align: middle;
+.products-table td {
+  padding: 8px 5px;
+  border: 1px solid #ddd;
+  font-size: 11px;
+  vertical-align: top;
 }
 
-.products-table-modern tbody tr:nth-child(even) {
-  background: #fafafa;
+.product-name {
+  font-weight: bold;
 }
 
-.products-table-modern tbody tr:hover {
-  background: #f0f8e6;
-}
-
-.product-designation {
-  font-weight: 500;
-  color: #333;
+.product-name small {
+  font-weight: normal;
+  color: #666;
+  display: block;
 }
 
 .text-center {
@@ -851,150 +787,493 @@
   text-align: right;
 }
 
-.font-medium {
-  font-weight: 500;
+.red-text {
+  color: #e53e3e;
 }
 
-/* Boîte des totaux */
-.totals-box {
+.font-bold {
+  font-weight: bold;
+}
+
+.legal-mention-table {
+  font-size: 9px;
+  color: #666;
+  margin-top: 5px;
+  padding: 5px;
+  background: #f9f9f9;
+}
+
+/* SIGNATURE + TOTAUX */
+.signature-totals-row {
   display: flex;
-  justify-content: flex-end;
-  margin-bottom: 25px;
+  gap: 20px;
+  margin-bottom: 20px;
+  align-items: flex-start;
 }
 
-.totals-grid {
-  background: white;
-  border: 2px solid var(--mycomfort-green);
-  border-radius: 8px;
-  overflow: hidden;
-  min-width: 280px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+.signature-section {
+  flex: 1;
+}
+
+.signature-title {
+  font-size: 11px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #7CB342;
+}
+
+.signature-box-dashed {
+  border: 2px dashed #7CB342;
+  min-height: 120px;
+  padding: 10px;
+  background: #f8fdf4;
+  position: relative;
+}
+
+.signature-image {
+  max-width: 100%;
+  max-height: 100px;
+}
+
+.signature-placeholder {
+  text-align: center;
+  color: #7CB342;
+}
+
+.signature-text {
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+.signature-subtext {
+  font-size: 10px;
+  color: #0066cc;
+  text-decoration: underline;
+  margin-bottom: 10px;
+}
+
+.signature-verification {
+  font-size: 9px;
+  color: #666;
+}
+
+/* TOTAUX */
+.totals-section {
+  min-width: 250px;
+}
+
+.totals-box {
+  border: 1px solid #ddd;
 }
 
 .total-line {
   display: flex;
   justify-content: space-between;
-  padding: 10px 15px;
-  border-bottom: 1px solid #f0f0f0;
-  font-size: 13px;
-}
-
-.total-line:last-child {
-  border-bottom: none;
+  padding: 5px 10px;
+  border-bottom: 1px solid #eee;
+  font-size: 11px;
 }
 
 .total-line-final {
-  display: flex;
-  justify-content: space-between;
-  padding: 12px 15px;
-  background: var(--mycomfort-green);
+  background: #7CB342;
   color: white;
-  font-size: 15px;
   font-weight: bold;
+  font-size: 12px;
 }
 
-.total-line-balance {
+.acceptance-checkbox {
+  background: #f0f8e8;
+  padding: 8px 10px;
+  font-size: 10px;
+  color: #7CB342;
+  text-align: center;
+}
+
+/* MODALITÉS PAIEMENT + LIVRAISON */
+.payment-delivery-section {
   display: flex;
-  justify-content: space-between;
-  padding: 12px 15px;
-  background: #fff3cd;
-  color: #856404;
-  font-size: 14px;
-  font-weight: bold;
+  gap: 20px;
+  margin-bottom: 20px;
 }
 
-/* Nouvelle boîte signature */
-.signature-box-new {
-  background: #f8f9fa;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 20px;
-  margin-bottom: 25px;
+.payment-section, .delivery-section {
+  flex: 1;
 }
 
-.signature-label {
-  font-size: 14px;
-  font-weight: bold;
-  color: var(--mycomfort-green);
-  margin-bottom: 15px;
+.payment-info, .delivery-info {
+  font-size: 11px;
+  line-height: 1.4;
+  padding: 8px;
+  background: #f9f9f9;
+  border: 1px solid #eee;
 }
 
-.signature-area {
+/* FOOTER VERT */
+.footer-green {
+  background: #7CB342;
+  color: white;
+  padding: 15px;
+  margin-top: 20px;
+  border-radius: 5px;
+}
+
+.footer-content {
   display: flex;
   align-items: center;
   gap: 20px;
 }
 
-.signature-img {
-  max-height: 70px;
-  max-width: 200px;
-  border: 2px solid #ddd;
-  border-radius: 6px;
-  padding: 8px;
+.qr-placeholder {
+  width: 60px;
+  height: 60px;
   background: white;
-}
-
-.signature-confirmation {
-  color: #28a745;
-  font-weight: 500;
-  font-size: 13px;
-}
-
-/* Boîte des notes */
-.notes-box {
-  background: #f1f8e9;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 25px;
-}
-
-.notes-title {
-  font-size: 14px;
-  font-weight: bold;
-  color: var(--mycomfort-green);
-  margin-bottom: 10px;
-}
-
-.notes-content {
-  font-size: 13px;
-  line-height: 1.4;
-  color: #333;
-}
-
-/* Nouvelle mention légale */
-.legal-footer-new {
-  margin-top: auto;
-  padding-top: 20px;
-  border-top: 1px solid #ddd;
-}
-
-.legal-notice-compact {
+  color: #7CB342;
   display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  background: #fffbf0;
-  border: 1px solid #ffc107;
-  border-radius: 6px;
-  padding: 12px;
-  font-size: 11px;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  border-radius: 5px;
 }
 
-.legal-icon {
-  font-size: 16px;
-  color: #ffc107;
-  flex-shrink: 0;
-}
-
-.legal-content strong {
-  display: block;
+.footer-logo {
+  font-size: 18px;
+  font-weight: bold;
   margin-bottom: 5px;
-  color: #333;
+}
+
+.footer-tagline {
+  font-size: 14px;
+  margin-bottom: 3px;
+}
+
+.footer-subtitle {
   font-size: 12px;
 }
 
-.legal-content p {
+/* RESPONSIVE ET IMPRESSION */
+@media print {
+  .myconfort-invoice {
+    max-width: none;
+    margin: 0;
+  }
+  
+  .invoice-page {
+    padding: 10mm;
+    page-break-after: always;
+  }
+  
+  .green-bg, .total-line-final, .footer-green, .invoice-header-box {
+    background: #7CB342 !important;
+    color: white !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  .signature-box-dashed {
+    border: 2px dashed #7CB342 !important;
+    background: #f8fdf4 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
+
+/* ==============================================
+   STYLES FACTURE MYCONFORT - MODÈLE EXACT ChatGPT
+   ============================================== */
+
+.invoice-container {
+  font-family: Arial, sans-serif;
+  max-width: 210mm;
+  margin: 0 auto;
+  padding: 20px;
+  background: white;
+  color: #333;
+}
+
+/* Header avec logo et info facture */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #4CAF50;
+  padding-bottom: 20px;
+}
+
+.logo {
+  max-width: 150px;
+  max-height: 80px;
+  object-fit: contain;
+}
+
+.invoice-info {
+  text-align: right;
+  background: #4CAF50;
+  color: white;
+  padding: 15px 20px;
+  border-radius: 8px;
+  min-width: 200px;
+}
+
+.invoice-info h2 {
+  margin: 0 0 10px 0;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.invoice-info p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+/* Section informations entreprise/client */
+.company-client-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.company h3,
+.client h3,
+.infos h3 {
+  background: #4CAF50;
+  color: white;
+  padding: 8px 12px;
+  margin: 0 0 15px 0;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.company p,
+.client p,
+.infos p {
+  margin: 5px 0;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.company a {
+  color: #4CAF50;
+  text-decoration: none;
+}
+
+.company a:hover {
+  text-decoration: underline;
+}
+
+/* Section détails des produits */
+.product-details {
+  margin-bottom: 30px;
+}
+
+.product-details table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.product-details th {
+  background: #4CAF50;
+  color: white;
+  padding: 12px 8px;
+  text-align: left;
+  font-weight: bold;
+  font-size: 13px;
+  border: 1px solid #45a049;
+}
+
+.product-details td {
+  padding: 10px 8px;
+  border: 1px solid #ddd;
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+.product-details tbody tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+.product-details tbody tr:hover {
+  background: #f0f8e6;
+}
+
+/* Section signature et totaux */
+.totals-signature {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 30px;
+  align-items: flex-start;
+}
+
+.signature {
+  flex: 1;
+  border: 2px dashed #4CAF50;
+  padding: 20px;
+  border-radius: 8px;
+  background: #f8fff8;
+}
+
+.signature h4 {
+  margin: 0 0 15px 0;
+  color: #4CAF50;
+  font-size: 16px;
+}
+
+.signature .electronic {
+  color: #4CAF50;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.signature-image {
+  max-width: 200px;
+  max-height: 60px;
+  margin-top: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 5px;
+  background: white;
+}
+
+.totals {
+  flex: 1;
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.totals p {
+  margin: 8px 0;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.totals p:last-child {
+  background: #4CAF50;
+  color: white;
+  padding: 10px;
+  margin: 15px -20px -20px -20px;
+  border-radius: 0 0 8px 8px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Section paiement */
+.payment {
+  margin-bottom: 30px;
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 4px solid #4CAF50;
+}
+
+.payment h4 {
+  margin: 0 0 15px 0;
+  color: #4CAF50;
+  font-size: 16px;
+}
+
+.payment p {
+  margin: 8px 0;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* Footer */
+.footer {
+  background: #4CAF50;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 30px;
+}
+
+.footer p {
   margin: 0;
-  line-height: 1.3;
-  color: #666;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Page break pour impression */
+.invoice-page {
+  page-break-after: always;
+}
+
+/* Styles d'impression */
+@media print {
+  .invoice-container {
+    max-width: none;
+    margin: 0;
+    padding: 15mm;
+    font-size: 12px;
+  }
+  
+  .header {
+    border-bottom: 2px solid #4CAF50 !important;
+  }
+  
+  .invoice-info {
+    background: #4CAF50 !important;
+    color: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  .company h3,
+  .client h3,
+  .infos h3 {
+    background: #4CAF50 !important;
+    color: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  .product-details th {
+    background: #4CAF50 !important;
+    color: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  .signature {
+    border: 2px dashed #4CAF50 !important;
+    background: #f8fff8 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  .totals p:last-child {
+    background: #4CAF50 !important;
+    color: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  .payment {
+    background: #f8f9fa !important;
+    border-left: 4px solid #4CAF50 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  .footer {
+    background: #4CAF50 !important;
+    color: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  /* Masquer les éléments d'interface */
+  .no-print,
+  button,
+  nav,
+  .modal,
+  .toast {
+    display: none !important;
+  }
 }
