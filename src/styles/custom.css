@@ -229,3 +229,772 @@
   font-size: 12px;
   font-weight: bold;
 }
+
+/* ==============================================
+   STYLES FACTURE PROFESSIONNELLE MYCONFORT
+   ============================================== */
+
+.professional-invoice {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #333333;
+  background: white;
+}
+
+/* Page de facture */
+.invoice-page {
+  max-width: 210mm;
+  margin: 0 auto;
+  padding: 20mm;
+  background: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  page-break-after: always;
+}
+
+/* En-tête de la facture */
+.invoice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--mycomfort-green);
+}
+
+.company-section {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  flex: 1;
+}
+
+.company-logo {
+  max-width: 120px;
+  max-height: 80px;
+  object-fit: contain;
+}
+
+.company-info h1 {
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--mycomfort-green);
+  margin: 0 0 5px 0;
+}
+
+.company-tagline {
+  font-style: italic;
+  color: var(--mycomfort-green);
+  font-size: 14px;
+  margin: 0 0 15px 0;
+  font-weight: 500;
+}
+
+.company-details {
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+.company-details p {
+  margin: 2px 0;
+}
+
+.invoice-info {
+  text-align: right;
+  min-width: 200px;
+}
+
+.invoice-info h2 {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--mycomfort-green);
+  margin: 0 0 15px 0;
+}
+
+.invoice-details .detail-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.detail-row .label {
+  font-weight: 600;
+  color: #666;
+}
+
+.detail-row .value {
+  font-weight: 500;
+  color: #333;
+}
+
+/* Section client */
+.client-section {
+  margin-bottom: 30px;
+}
+
+.client-section h3 {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--mycomfort-green);
+  margin: 0 0 15px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.client-info {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 4px solid var(--mycomfort-green);
+}
+
+.client-info p {
+  margin: 3px 0;
+  font-size: 13px;
+}
+
+.client-name {
+  font-weight: bold !important;
+  font-size: 15px !important;
+  color: var(--mycomfort-green) !important;
+}
+
+/* Section paiement et livraison */
+.payment-delivery-section {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 30px;
+  padding: 15px;
+  background: #f1f8e9;
+  border-radius: 8px;
+}
+
+.payment-info, .delivery-info {
+  flex: 1;
+}
+
+.payment-info h4, .delivery-info h4 {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--mycomfort-green);
+  margin: 0 0 8px 0;
+}
+
+.payment-info p, .delivery-info p {
+  margin: 4px 0;
+  font-size: 13px;
+}
+
+.delivery-note {
+  font-style: italic;
+  color: #666;
+  font-size: 12px !important;
+}
+
+/* Section produits */
+.products-section {
+  margin-bottom: 30px;
+}
+
+.products-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.products-table th {
+  background: var(--mycomfort-green);
+  color: white;
+  padding: 12px 8px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  border: 1px solid var(--mycomfort-green-dark);
+}
+
+.products-table td {
+  padding: 10px 8px;
+  border: 1px solid #ddd;
+  font-size: 13px;
+}
+
+.products-table tbody tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+.products-table tbody tr:hover {
+  background: #f0f8e6;
+}
+
+.product-name {
+  font-weight: 500;
+  color: #333;
+}
+
+/* Section totaux */
+.totals-section {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 30px;
+}
+
+.totals-table {
+  min-width: 300px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.total-row:last-child {
+  border-bottom: none;
+}
+
+.total-row.final {
+  background: var(--mycomfort-green);
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.total-row.balance {
+  background: #fff3cd;
+  color: #856404;
+  font-weight: bold;
+}
+
+.total-label {
+  font-weight: 500;
+}
+
+.total-value {
+  font-weight: 600;
+}
+
+/* Section signature */
+.signature-section {
+  margin-bottom: 30px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.signature-section h4 {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--mycomfort-green);
+  margin: 0 0 15px 0;
+}
+
+.signature-container {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.signature-container img {
+  max-height: 60px;
+  max-width: 200px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 5px;
+  background: white;
+}
+
+.signature-status {
+  color: #28a745;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+/* Section notes */
+.notes-section {
+  margin-bottom: 30px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid var(--mycomfort-green);
+}
+
+.notes-section h4 {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--mycomfort-green);
+  margin: 0 0 10px 0;
+}
+
+.notes-section p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* Mention légale en bas de page */
+.legal-footer {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid #ddd;
+}
+
+.legal-notice {
+  font-size: 11px;
+  color: #666;
+  background: #f8f9fa;
+  padding: 12px;
+  border-radius: 6px;
+  border-left: 3px solid #ffc107;
+}
+
+.legal-notice strong {
+  color: #333;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.legal-notice p {
+  margin: 0;
+  line-height: 1.3;
+}
+
+/* ==============================================
+   STYLES D'IMPRESSION OPTIMISÉS
+   ============================================== */
+
+@media print {
+  .professional-invoice {
+    font-size: 12px;
+  }
+  
+  .invoice-page {
+    max-width: none;
+    margin: 0;
+    padding: 15mm;
+    box-shadow: none;
+    page-break-after: always;
+  }
+  
+  .company-logo {
+    max-width: 100px;
+    max-height: 60px;
+  }
+  
+  .company-info h1 {
+    font-size: 24px;
+  }
+  
+  .invoice-info h2 {
+    font-size: 20px;
+  }
+  
+  .products-table {
+    box-shadow: none;
+  }
+  
+  .products-table th {
+    background: var(--mycomfort-green) !important;
+    color: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  .total-row.final {
+    background: var(--mycomfort-green) !important;
+    color: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  .legal-notice {
+    background: #f8f9fa !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* ==============================================
+   NOUVEAU FORMAT PROFESSIONNEL MYCONFORT
+   ============================================== */
+
+/* En-tête centré avec logo */
+.invoice-header-center {
+  text-align: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.company-branding {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.company-logo-center {
+  max-width: 150px;
+  max-height: 80px;
+  object-fit: contain;
+}
+
+.company-name {
+  font-size: 32px;
+  font-weight: bold;
+  color: var(--mycomfort-green);
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.company-tagline {
+  font-style: italic;
+  color: var(--mycomfort-green);
+  font-size: 16px;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Ligne d'informations entreprise/facture */
+.header-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 30px;
+  gap: 40px;
+}
+
+.company-details-left {
+  flex: 1;
+}
+
+.company-details-left h3 {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--mycomfort-green);
+  margin: 0 0 10px 0;
+}
+
+.company-details-left p {
+  margin: 3px 0;
+  font-size: 13px;
+  color: #666;
+}
+
+.invoice-info-right {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.invoice-number-box {
+  background: #f8f9fa;
+  border: 2px solid var(--mycomfort-green);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  min-width: 200px;
+}
+
+.invoice-number-box h2 {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--mycomfort-green);
+  margin: 0 0 15px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.invoice-meta {
+  text-align: left;
+}
+
+.meta-line {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.meta-line strong {
+  color: #666;
+  min-width: 50px;
+}
+
+/* Section client dans un cadre */
+.client-section-box {
+  background: #f1f8e9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 25px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--mycomfort-green);
+  margin: 0 0 15px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.client-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.client-name-prominent {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--mycomfort-green);
+}
+
+.client-address p {
+  margin: 2px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Paiement et livraison en ligne */
+.payment-delivery-row {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 25px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid var(--mycomfort-green);
+}
+
+.payment-col, .delivery-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.payment-col strong, .delivery-col strong {
+  color: var(--mycomfort-green);
+  font-size: 14px;
+}
+
+.payment-col span, .delivery-col span {
+  font-size: 13px;
+  color: #333;
+}
+
+.delivery-note {
+  font-size: 12px !important;
+  color: #666 !important;
+  font-style: italic;
+  margin-top: 5px;
+}
+
+/* Nouveau tableau des produits */
+.products-section-new {
+  margin-bottom: 30px;
+}
+
+.products-table-modern {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.products-table-modern th {
+  background: linear-gradient(135deg, var(--mycomfort-green), var(--mycomfort-green-light));
+  color: white;
+  padding: 12px 8px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 12px;
+  border: none;
+}
+
+.products-table-modern td {
+  padding: 10px 8px;
+  border-bottom: 1px solid #eee;
+  font-size: 12px;
+  vertical-align: middle;
+}
+
+.products-table-modern tbody tr:nth-child(even) {
+  background: #fafafa;
+}
+
+.products-table-modern tbody tr:hover {
+  background: #f0f8e6;
+}
+
+.product-designation {
+  font-weight: 500;
+  color: #333;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+/* Boîte des totaux */
+.totals-box {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 25px;
+}
+
+.totals-grid {
+  background: white;
+  border: 2px solid var(--mycomfort-green);
+  border-radius: 8px;
+  overflow: hidden;
+  min-width: 280px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.total-line {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 15px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 13px;
+}
+
+.total-line:last-child {
+  border-bottom: none;
+}
+
+.total-line-final {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 15px;
+  background: var(--mycomfort-green);
+  color: white;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.total-line-balance {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 15px;
+  background: #fff3cd;
+  color: #856404;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* Nouvelle boîte signature */
+.signature-box-new {
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 25px;
+}
+
+.signature-label {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--mycomfort-green);
+  margin-bottom: 15px;
+}
+
+.signature-area {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.signature-img {
+  max-height: 70px;
+  max-width: 200px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  padding: 8px;
+  background: white;
+}
+
+.signature-confirmation {
+  color: #28a745;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+/* Boîte des notes */
+.notes-box {
+  background: #f1f8e9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 25px;
+}
+
+.notes-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--mycomfort-green);
+  margin-bottom: 10px;
+}
+
+.notes-content {
+  font-size: 13px;
+  line-height: 1.4;
+  color: #333;
+}
+
+/* Nouvelle mention légale */
+.legal-footer-new {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid #ddd;
+}
+
+.legal-notice-compact {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #fffbf0;
+  border: 1px solid #ffc107;
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 11px;
+}
+
+.legal-icon {
+  font-size: 16px;
+  color: #ffc107;
+  flex-shrink: 0;
+}
+
+.legal-content strong {
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+  font-size: 12px;
+}
+
+.legal-content p {
+  margin: 0;
+  line-height: 1.3;
+  color: #666;
+}
