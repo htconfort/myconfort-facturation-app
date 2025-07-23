@@ -48,7 +48,27 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
       <div className="invoice-container">
         {/* Header */}
         <header className="invoice-header">
-          <div>
+          <div style={{ textAlign: 'center', width: '100%' }}>
+            <img 
+              src="/HT-Confort_Full_Green.svg" 
+              alt="HT-Confort Logo" 
+              className="company-logo"
+              style={{ 
+                maxWidth: '200px', 
+                maxHeight: '100px', 
+                margin: '0 auto 10px auto',
+                display: 'block'
+              }}
+            />
+            <p style={{ 
+              fontStyle: 'italic', 
+              color: '#477A0C', 
+              fontSize: '14px',
+              margin: '0 0 15px 0',
+              fontWeight: '500'
+            }}>
+              Quand on dort bien, on vit bien
+            </p>
             <h1>MYCONFORT</h1>
             <p className="subtitle">Facturation professionnelle avec signature électronique</p>
           </div>
