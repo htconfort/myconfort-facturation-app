@@ -114,23 +114,22 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
           </div>
         </div>
 
-        {/* Logistics Information */}
-        {invoice.delivery.method && (
-          <section className="info-section">
-            <div className="info-header">INFORMATIONS LOGISTIQUES</div>
-            <div className="info-row">
-              <span className="info-label">Mode de livraison:</span>
-              <span className="info-value">{invoice.delivery.method}</span>
-            </div>
-          </section>
-        )}
-
-        {/* Payment Information */}
+        {/* Payment and Delivery Information */}
         <section className="info-section">
-          <div className="info-header payment">MODE DE RÈGLEMENT</div>
+          <div className="info-header payment">MODE DE RÈGLEMENT & LIVRAISON</div>
           <div className="info-row">
             <span className="info-label">Méthode de paiement:</span>
             <span className="info-value">{invoice.payment.method || 'Non spécifié'}</span>
+          </div>
+          <div className="info-row">
+            <span className="info-label">Modalité de livraison:</span>
+            <span className="info-value">{invoice.delivery.method || 'Non spécifié'}</span>
+          </div>
+          <div className="info-row">
+            <span className="info-label"></span>
+            <span className="info-value delivery-note" style={{ fontSize: '0.9em', color: '#666', fontStyle: 'italic' }}>
+              Livraison réalisée au pied de l'immeuble ou au portail
+            </span>
           </div>
           <div className="info-row">
             <span className="info-label">Signature client MYCONFORT:</span>
