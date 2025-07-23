@@ -50,6 +50,15 @@ export const productCatalog: ProductCatalog[] = [
   { category: 'Plateau', name: 'PLATEAU PRESTIGE 160 x 200', priceTTC: 210, autoCalculateHT: true },
   { category: 'Plateau', name: 'PLATEAU PRESTIGE 180 x 200', priceTTC: 220, autoCalculateHT: true },
   { category: 'Plateau', name: 'PLATEAU PRESTIGE 200 x 200', priceTTC: 230, autoCalculateHT: true },
+  
+  // Autres
+  { category: 'Autres', name: 'Pack 2 taies d\'oreiller fraicheur activeCool thalasso', priceTTC: 20, autoCalculateHT: true },
+  { category: 'Autres', name: 'Pack 2 taies d\'oreiller fraicheur activeCool dual', priceTTC: 20, autoCalculateHT: true },
+  { category: 'Autres', name: 'PACK 2 TAIES OREILLER rectangle blanche thalasso', priceTTC: 15, autoCalculateHT: true },
+  { category: 'Autres', name: 'PACK 2 TAIES OREILLER rectangle blanche dual', priceTTC: 15, autoCalculateHT: true },
+  { category: 'Autres', name: 'PACK 2 TAIES OREILLER rectangle blanche douceur', priceTTC: 15, autoCalculateHT: true },
+  
+  // Accessoires
   { category: 'Accessoires', name: 'Régule-jambes', priceTTC: 70, autoCalculateHT: true },
   { category: 'Accessoires', name: 'Protège-matelas', price: 0, priceTTC: 0, autoCalculateHT: false },
   { category: 'Accessoires', name: 'Housse de couette', price: 0, priceTTC: 0, autoCalculateHT: false },
@@ -62,5 +71,6 @@ export const productCategories = [
   'Couettes',
   'Oreillers',
   'Plateau',
+  'Autres',
   'Accessoires'
 ];
