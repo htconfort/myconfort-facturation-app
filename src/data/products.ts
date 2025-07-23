@@ -34,7 +34,6 @@ export const productCatalog: ProductCatalog[] = [
   { category: 'Oreillers', name: 'Oreiller Dual', priceTTC: 60, autoCalculateHT: true },
   { category: 'Oreillers', name: 'Oreiller Panama', priceTTC: 70, autoCalculateHT: true },
   { category: 'Oreillers', name: 'Oreiller Papillon', priceTTC: 80, autoCalculateHT: true },
-  { category: 'Oreillers', name: 'Pack de 2 oreillers', priceTTC: 100, autoCalculateHT: true },
   { category: 'Oreillers', name: 'Traversin 140', priceTTC: 140, autoCalculateHT: true },
   { category: 'Oreillers', name: 'Traversin 160', priceTTC: 160, autoCalculateHT: true },
   { category: 'Oreillers', name: 'Pack divers', price: 0, priceTTC: 0, autoCalculateHT: false },
@@ -51,12 +50,13 @@ export const productCatalog: ProductCatalog[] = [
   { category: 'Plateau', name: 'PLATEAU PRESTIGE 180 x 200', priceTTC: 220, autoCalculateHT: true },
   { category: 'Plateau', name: 'PLATEAU PRESTIGE 200 x 200', priceTTC: 230, autoCalculateHT: true },
   
-  // Autres
-  { category: 'Autres', name: 'Pack 2 taies d\'oreiller fraicheur activeCool thalasso', priceTTC: 20, autoCalculateHT: true },
-  { category: 'Autres', name: 'Pack 2 taies d\'oreiller fraicheur activeCool dual', priceTTC: 20, autoCalculateHT: true },
-  { category: 'Autres', name: 'PACK 2 TAIES OREILLER rectangle blanche thalasso', priceTTC: 15, autoCalculateHT: true },
-  { category: 'Autres', name: 'PACK 2 TAIES OREILLER rectangle blanche dual', priceTTC: 15, autoCalculateHT: true },
-  { category: 'Autres', name: 'PACK 2 TAIES OREILLER rectangle blanche douceur', priceTTC: 15, autoCalculateHT: true },
+  // Pack
+  { category: 'Pack', name: 'Pack 2 taies d\'oreiller fraicheur activeCool thalasso', priceTTC: 20, autoCalculateHT: true },
+  { category: 'Pack', name: 'Pack 2 taies d\'oreiller fraicheur activeCool dual', priceTTC: 20, autoCalculateHT: true },
+  { category: 'Pack', name: 'PACK 2 TAIES OREILLER rectangle blanche thalasso', priceTTC: 15, autoCalculateHT: true },
+  { category: 'Pack', name: 'PACK 2 TAIES OREILLER rectangle blanche dual', priceTTC: 15, autoCalculateHT: true },
+  { category: 'Pack', name: 'PACK 2 TAIES OREILLER rectangle blanche douceur', priceTTC: 15, autoCalculateHT: true },
+  { category: 'Pack', name: 'Pack de 2 oreillers', priceTTC: 100, autoCalculateHT: true },
   
   // Diverse
   { category: 'Diverse', name: 'Produit personnalisé', price: 0, priceTTC: 0, autoCalculateHT: false },
@@ -74,7 +74,7 @@ export const productCategories = [
   'Couettes',
   'Oreillers',
   'Plateau',
-  'Autres',
+  'Pack',
   'Diverse',
   'Accessoires'
 ];
