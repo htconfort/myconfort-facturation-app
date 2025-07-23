@@ -517,6 +517,72 @@
   font-size: 13px;
 }
 
+/* Bloc signature - même style que le bloc totals mais avec des couleurs visibles */
+.signature-payment-box {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  border: 2px solid #4CAF50;
+  margin-bottom: 20px;
+  width: 100%;
+  box-sizing: border-box;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.signature-payment-header {
+  font-weight: bold;
+  font-size: 14px;
+  color: #4CAF50;
+  margin-bottom: 15px;
+  text-align: center;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #4CAF50;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.signature-payment-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100px;
+}
+
+.signature-payment-image {
+  max-width: 150px;
+  max-height: 60px;
+  border: 2px solid #4CAF50;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  background: white;
+  padding: 5px;
+}
+
+.signature-payment-status {
+  font-size: 13px;
+  color: #4CAF50;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.signature-payment-date {
+  font-size: 12px;
+  color: #333;
+  font-weight: 500;
+}
+
+.signature-payment-placeholder {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+  text-align: center;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 4px;
+  border: 1px dashed #ccc;
+}
+
 /* Section notes */
 .notes-section {
   margin-bottom: 30px;
@@ -1409,6 +1475,7 @@
   text-align: left;
   font-size: 12px;
   font-weight: bold;
+  border: 1px solid #5a9e2d;
 }
 
 .products-table td {
@@ -1893,4 +1960,20 @@
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
+}
+
+/* Masquer la phrase TVA non applicable du footer */
+.footer::after {
+  content: "" !important;
+  display: none !important;
+}
+
+/* S'assurer qu'aucune règle n'ajoute automatiquement la phrase TVA */
+.footer p:contains("TVA non applicable") {
+  display: none !important;
+}
+
+/* Règle plus spécifique pour empêcher l'affichage de cette phrase */
+*:contains("TVA non applicable, art. 293 B du CGI - RCS Paris 824 313 530") {
+  display: none !important;
 }
