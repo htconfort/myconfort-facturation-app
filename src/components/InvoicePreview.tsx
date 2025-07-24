@@ -24,49 +24,59 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
   return (
     <div 
       id="facture-apercu" 
+<<<<<<< HEAD
       className={`facture-apercu ${className}`}
     >
       <div className="invoice-container">
         {/* Header */}
         <header className="header">
+=======
+      className={`facture-apercu ultra-compact ${className}`}
+    >
+      <div className="invoice-container">
+        {/* Header compact avec bouton SIGNÉE à droite */}
+        <header className="invoice-header-compact">
+>>>>>>> feature/harmonisation-pdf-google-drive
           <div>
-            <h1>MYCONFORT</h1>
-            <p className="subtitle">Facturation professionnelle avec signature électronique</p>
+            <h1 style={{ fontSize: '20px', margin: '0', color: '#477A0C' }}>MYCONFORT</h1>
+            <p style={{ fontSize: '11px', margin: '2px 0', color: '#666' }}>Facturation professionnelle avec signature électronique</p>
           </div>
+<<<<<<< HEAD
           {invoice.isSigned && (
             <div className="signed-badge">✓ SIGNÉE</div>
+=======
+          {invoice.signature && (
+            <div className="signed-badge-right">✓ SIGNÉE</div>
+>>>>>>> feature/harmonisation-pdf-google-drive
           )}
         </header>
 
-        {/* Main Information */}
-        <section className="main-info">
-          <div className="company-details">
-            <h3>MYCONFORT</h3>
-            <p>88 Avenue des Ternes</p>
-            <p>75017 Paris, France</p>
-            <p>SIRET: 824 313 530 00027</p>
-            <p>Tél: 04 68 50 41 45</p>
-            <p>Email: myconfort@gmail.com</p>
-            <p>Site web: https://www.htconfort.com</p>
+        {/* Main Information - Ultra compact */}
+        <section className="main-info-compact">
+          <div className="company-details-compact">
+            <h3 style={{ fontSize: '12px', margin: '0 0 5px 0', color: '#477A0C' }}>MYCONFORT</h3>
+            <p style={{ fontSize: '9px', margin: '1px 0', lineHeight: '1.2' }}>
+              88 Avenue des Ternes • 75017 Paris, France<br/>
+              SIRET: 824 313 530 00027 • Tél: 04 68 50 41 45<br/>
+              Email: myconfort@gmail.com • https://www.htconfort.com
+            </p>
           </div>
-          <div className="invoice-meta">
-            <div className="meta-item">
-              <span className="meta-label">N° Facture:</span>
-              <span className="meta-value">{invoice.invoiceNumber}</span>
+          <div className="invoice-meta-compact">
+            <div style={{ fontSize: '10px', marginBottom: '3px' }}>
+              <strong>N° Facture:</strong> {invoice.invoiceNumber}
             </div>
-            <div className="meta-item">
-              <span className="meta-label">Date:</span>
-              <span className="meta-value">{new Date(invoice.invoiceDate).toLocaleDateString('fr-FR')}</span>
+            <div style={{ fontSize: '10px', marginBottom: '3px' }}>
+              <strong>Date:</strong> {new Date(invoice.invoiceDate).toLocaleDateString('fr-FR')}
             </div>
             {invoice.eventLocation && (
-              <div className="meta-item">
-                <span className="meta-label">Lieu:</span>
-                <span className="meta-value">{invoice.eventLocation}</span>
+              <div style={{ fontSize: '10px', marginBottom: '3px' }}>
+                <strong>Lieu:</strong> {invoice.eventLocation}
               </div>
             )}
           </div>
         </section>
 
+<<<<<<< HEAD
         {/* Client Information - Utiliser les champs plats */}
         <div className="section-header">INFORMATIONS CLIENT</div>
         <div className="client-grid">
@@ -113,6 +123,53 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
           <div className="info-row">
             <span className="info-label">Méthode de paiement:</span>
             <span className="info-value">{invoice.paymentMethod || 'Non spécifié'}</span>
+=======
+        {/* Client Information - Compact et vert */}
+        <div className="section-header-green" style={{ padding: '8px 15px', margin: '10px 0 5px 0', fontSize: '12px' }}>INFORMATIONS CLIENT</div>
+        <div className="client-grid-compact">
+          <div className="client-field-compact">
+            <span className="label-compact">Nom:</span>
+            <span className="value-compact">{invoice.client.name}</span>
+          </div>
+          <div className="client-field-compact">
+            <span className="label-compact">Adresse:</span>
+            <span className="value-compact">{invoice.client.address}</span>
+          </div>
+          <div className="client-field-compact">
+            <span className="label-compact">CP:</span>
+            <span className="value-compact">{invoice.client.postalCode}</span>
+          </div>
+          <div className="client-field-compact">
+            <span className="label-compact">Ville:</span>
+            <span className="value-compact">{invoice.client.city}</span>
+          </div>
+          <div className="client-field-compact">
+            <span className="label-compact">Code porte:</span>
+            <span className="value-compact">{invoice.client.doorCode}</span>
+          </div>
+          <div className="client-field-compact">
+            <span className="label-compact">Email:</span>
+            <span className="value-compact">{invoice.client.email}</span>
+          </div>
+          <div className="client-field-compact">
+            <span className="label-compact">Tél:</span>
+            <span className="value-compact">{invoice.client.phone}</span>
+          </div>
+        </div>
+
+        {/* Payment and Delivery Information - Compact */}
+        <section className="info-section-compact">
+          <div className="info-header-compact">MODE DE RÈGLEMENT & LIVRAISON</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', margin: '5px 0' }}>
+            <span><strong>Paiement:</strong> {invoice.payment.method || 'Non spécifié'}</span>
+            <span><strong>Livraison:</strong> {invoice.delivery.method || 'Non spécifié'}</span>
+          </div>
+          <div style={{ fontSize: '9px', color: '#666', fontStyle: 'italic', textAlign: 'center', margin: '3px 0' }}>
+            Livraison réalisée au pied de l'immeuble ou au portail
+          </div>
+          <div style={{ fontSize: '10px', textAlign: 'center', margin: '3px 0' }}>
+            <strong>Signature client:</strong> {invoice.signature ? '✓ Signature électronique enregistrée' : 'En attente de signature'}
+>>>>>>> feature/harmonisation-pdf-google-drive
           </div>
         </section>
 
@@ -120,11 +177,21 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
         <section className="products-section">
           <div className="products-title">Produits & Tarification</div>
           
+<<<<<<< HEAD
           {/* Signature Box - Version compacte */}
           {invoice.signature && (
             <div className="signature-box-compact">
               <div className="signature-label-small">Signature client:</div>
               <img src={invoice.signature} alt="Signature électronique" className="signature-compact" />
+=======
+          {/* Signature Box - Clean and Professional */}
+          {invoice.signature && (
+            <div className="signature-box">
+              <div className="signature-label">SIGNATURE CLIENT</div>
+              <div className="signature-placeholder">
+                <img src={invoice.signature} alt="Signature électronique" style={{ maxHeight: '60px', maxWidth: '200px' }} />
+              </div>
+>>>>>>> feature/harmonisation-pdf-google-drive
             </div>
           )}
 

@@ -332,7 +332,11 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
           </div>
         </div>
 
+<<<<<<< HEAD
         {/* Content */}
+=======
+        {/* Content - FORMAT UNIQUE : InvoicePreview */}
+>>>>>>> feature/harmonisation-pdf-google-drive
         <div className="no-print overflow-auto max-h-[calc(90vh-220px)] bg-gray-100 p-4">
           <div id="pdf-preview-content">
             <InvoicePreview invoice={invoice} className="print-preview" />

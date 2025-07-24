@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { InvoiceHeader } from './components/InvoiceHeader';
 import { ClientSection } from './components/ClientSection';
@@ -70,11 +70,6 @@ function App() {
     message: '',
     type: 'success' as ToastType
   });
-
-  // Ref pour la section d'aperçu de la facture à capturer pour le PDF
-  // NOTE: previewRef est toujours utilisé pour l'affichage de InvoicePDF,
-  // mais AdvancedPDFService génère le PDF à partir des données, pas du DOM.
-  const previewRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setClients(loadClients());
@@ -618,12 +613,16 @@ function App() {
           onShowEmailJSConfig={() => setShowEmailJSConfig(true)}
         /> */}
 
+<<<<<<< HEAD
         {/* Hidden InvoicePreview for PDF generation */}
         <div style={{ display: 'none' }}>
           <div ref={previewRef}>
             <InvoicePreview invoice={invoice} className="pdf-generation" />
           </div>
         </div>
+=======
+
+>>>>>>> feature/harmonisation-pdf-google-drive
 
         {/* Aperçu de la facture - UNIFORMISÉ SANS BOUTON TÉLÉCHARGER PDF */}
         {showInvoicePreview && (
@@ -645,7 +644,11 @@ function App() {
             {/* Ajout de l'ID pour la référence unique */}
             <div id="invoice-preview-section" className="bg-[#F2EFE2] rounded-lg p-4">
               <div className="border border-gray-300 rounded-lg overflow-hidden">
+<<<<<<< HEAD
                 <InvoicePreview invoice={invoice} className="main-preview" />
+=======
+                <InvoicePreview invoice={invoice} />
+>>>>>>> feature/harmonisation-pdf-google-drive
               </div>
             </div>
           </div>
@@ -743,9 +746,7 @@ function App() {
         isOpen={showPDFPreview}
         onClose={() => setShowPDFPreview(false)}
         invoice={invoice}
-        previewRef={previewRef} // Still passed for the visual preview in the modal
-        handleDownloadPDF={handleDownloadPDF}
-        handleSendPDF={handleSendPDF}
+        onDownload={handleDownloadPDF}
       />
 
       <PDFGuideModal
