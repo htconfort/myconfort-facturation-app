@@ -1,6 +1,7 @@
 import React from 'react';
 import { Invoice } from '../types';
-import { formatCurrency } from '../utils/calculations';
+import { formatCurrency, calculateProductTotal } from '../utils/calculations';
+import { ConditionsGenerales } from './ConditionsGenerales';
 
 interface InvoicePreviewProps {
   invoice: Invoice;
@@ -11,43 +12,48 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
   invoice, 
   className = "" 
 }) => {
-  // Utiliser les montants pré-calculés directement depuis l'invoice
-  const {
-    montantHT,
-    montantTTC,
-    montantTVA,
-    montantRemise,
-    montantAcompte,
-    montantRestant
-  } = invoice;
+  // Calculer le total TTC
+  const totalTTC = invoice.products.reduce((sum, product) => {
+    return sum + calculateProductTotal(
+      product.quantity,
+      product.priceTTC,
+      product.discount,
+      product.discountType === 'percent' ? 'percent' : 'fixed'
+    );
+  }, 0);
+
+  // Calculer l'acompte et le montant restant
+  const acompteAmount = invoice.montantAcompte || 0;
+  const montantRestant = totalTTC - acompteAmount;
+
+  // Calculer les totaux pour l'affichage
+  const totalHT = totalTTC / (1 + (invoice.taxRate / 100));
+  const totalTVA = totalTTC - totalHT;
+  const totalDiscount = invoice.products.reduce((sum, product) => {
+    const originalTotal = product.priceTTC * product.quantity;
+    const discountedTotal = calculateProductTotal(
+      product.quantity,
+      product.priceTTC,
+      product.discount,
+      product.discountType === 'percent' ? 'percent' : 'fixed'
+    );
+    return sum + (originalTotal - discountedTotal);
+  }, 0);
 
   return (
     <div 
       id="facture-apercu" 
-<<<<<<< HEAD
-      className={`facture-apercu ${className}`}
-    >
-      <div className="invoice-container">
-        {/* Header */}
-        <header className="header">
-=======
       className={`facture-apercu ultra-compact ${className}`}
     >
       <div className="invoice-container">
         {/* Header compact avec bouton SIGNÉE à droite */}
         <header className="invoice-header-compact">
->>>>>>> feature/harmonisation-pdf-google-drive
           <div>
             <h1 style={{ fontSize: '20px', margin: '0', color: '#477A0C' }}>MYCONFORT</h1>
             <p style={{ fontSize: '11px', margin: '2px 0', color: '#666' }}>Facturation professionnelle avec signature électronique</p>
           </div>
-<<<<<<< HEAD
-          {invoice.isSigned && (
-            <div className="signed-badge">✓ SIGNÉE</div>
-=======
           {invoice.signature && (
             <div className="signed-badge-right">✓ SIGNÉE</div>
->>>>>>> feature/harmonisation-pdf-google-drive
           )}
         </header>
 
@@ -76,84 +82,36 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
           </div>
         </section>
 
-<<<<<<< HEAD
-        {/* Client Information - Utiliser les champs plats */}
-        <div className="section-header">INFORMATIONS CLIENT</div>
-        <div className="client-grid">
-          <div className="client-field">
-            <span className="label">Nom complet</span>
-            <span className="value">{invoice.clientName}</span>
-          </div>
-          <div className="client-field">
-            <span className="label">Adresse</span>
-            <span className="value">{invoice.clientAddress}</span>
-          </div>
-          <div className="client-field">
-            <span className="label">Code postal</span>
-            <span className="value">{invoice.clientPostalCode}</span>
-          </div>
-          <div className="client-field">
-            <span className="label">Ville</span>
-            <span className="value">{invoice.clientCity}</span>
-          </div>
-          <div className="client-field">
-            <span className="label">Email</span>
-            <span className="value">{invoice.clientEmail}</span>
-          </div>
-          <div className="client-field">
-            <span className="label">Téléphone</span>
-            <span className="value">{invoice.clientPhone}</span>
-          </div>
-        </div>
-
-        {/* Logistics Information */}
-        {invoice.deliveryMethod && (
-          <section className="info-section">
-            <div className="info-header">INFORMATIONS LOGISTIQUES</div>
-            <div className="info-row">
-              <span className="info-label">Mode de livraison:</span>
-              <span className="info-value">{invoice.deliveryMethod}</span>
-            </div>
-          </section>
-        )}
-
-        {/* Payment Information */}
-        <section className="info-section">
-          <div className="info-header payment">MODE DE RÈGLEMENT</div>
-          <div className="info-row">
-            <span className="info-label">Méthode de paiement:</span>
-            <span className="info-value">{invoice.paymentMethod || 'Non spécifié'}</span>
-=======
         {/* Client Information - Compact et vert */}
         <div className="section-header-green" style={{ padding: '8px 15px', margin: '10px 0 5px 0', fontSize: '12px' }}>INFORMATIONS CLIENT</div>
         <div className="client-grid-compact">
           <div className="client-field-compact">
             <span className="label-compact">Nom:</span>
-            <span className="value-compact">{invoice.client.name}</span>
+            <span className="value-compact">{invoice.clientName}</span>
           </div>
           <div className="client-field-compact">
             <span className="label-compact">Adresse:</span>
-            <span className="value-compact">{invoice.client.address}</span>
+            <span className="value-compact">{invoice.clientAddress}</span>
           </div>
           <div className="client-field-compact">
             <span className="label-compact">CP:</span>
-            <span className="value-compact">{invoice.client.postalCode}</span>
+            <span className="value-compact">{invoice.clientPostalCode}</span>
           </div>
           <div className="client-field-compact">
             <span className="label-compact">Ville:</span>
-            <span className="value-compact">{invoice.client.city}</span>
+            <span className="value-compact">{invoice.clientCity}</span>
           </div>
           <div className="client-field-compact">
             <span className="label-compact">Code porte:</span>
-            <span className="value-compact">{invoice.client.doorCode}</span>
+            <span className="value-compact">{invoice.clientDoorCode}</span>
           </div>
           <div className="client-field-compact">
             <span className="label-compact">Email:</span>
-            <span className="value-compact">{invoice.client.email}</span>
+            <span className="value-compact">{invoice.clientEmail}</span>
           </div>
           <div className="client-field-compact">
             <span className="label-compact">Tél:</span>
-            <span className="value-compact">{invoice.client.phone}</span>
+            <span className="value-compact">{invoice.clientPhone}</span>
           </div>
         </div>
 
@@ -161,15 +119,14 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
         <section className="info-section-compact">
           <div className="info-header-compact">MODE DE RÈGLEMENT & LIVRAISON</div>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', margin: '5px 0' }}>
-            <span><strong>Paiement:</strong> {invoice.payment.method || 'Non spécifié'}</span>
-            <span><strong>Livraison:</strong> {invoice.delivery.method || 'Non spécifié'}</span>
+            <span><strong>Paiement:</strong> {invoice.paymentMethod || 'Non spécifié'}</span>
+            <span><strong>Livraison:</strong> {invoice.deliveryMethod || 'Non spécifié'}</span>
           </div>
           <div style={{ fontSize: '9px', color: '#666', fontStyle: 'italic', textAlign: 'center', margin: '3px 0' }}>
             Livraison réalisée au pied de l'immeuble ou au portail
           </div>
           <div style={{ fontSize: '10px', textAlign: 'center', margin: '3px 0' }}>
             <strong>Signature client:</strong> {invoice.signature ? '✓ Signature électronique enregistrée' : 'En attente de signature'}
->>>>>>> feature/harmonisation-pdf-google-drive
           </div>
         </section>
 
@@ -177,13 +134,6 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
         <section className="products-section">
           <div className="products-title">Produits & Tarification</div>
           
-<<<<<<< HEAD
-          {/* Signature Box - Version compacte */}
-          {invoice.signature && (
-            <div className="signature-box-compact">
-              <div className="signature-label-small">Signature client:</div>
-              <img src={invoice.signature} alt="Signature électronique" className="signature-compact" />
-=======
           {/* Signature Box - Clean and Professional */}
           {invoice.signature && (
             <div className="signature-box">
@@ -191,7 +141,6 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
               <div className="signature-placeholder">
                 <img src={invoice.signature} alt="Signature électronique" style={{ maxHeight: '60px', maxWidth: '200px' }} />
               </div>
->>>>>>> feature/harmonisation-pdf-google-drive
             </div>
           )}
 
@@ -207,19 +156,27 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
             </thead>
             <tbody>
               {invoice.products.map((product, index) => {
+                const unitPriceHT = product.priceTTC / (1 + (invoice.taxRate / 100));
+                const totalProduct = calculateProductTotal(
+                  product.quantity,
+                  product.priceTTC,
+                  product.discount,
+                  product.discountType === 'percent' ? 'percent' : 'fixed'
+                );
+                
                 return (
                   <tr key={index}>
                     <td>{product.quantity}</td>
-                    <td>{formatCurrency(product.priceHT)}</td>
+                    <td>{formatCurrency(unitPriceHT)}</td>
                     <td>{formatCurrency(product.priceTTC)}</td>
                     <td>
                       {product.discount > 0 ? (
-                        product.discountType === 'percentage' ? 
+                        product.discountType === 'percent' ? 
                           `${product.discount}%` : 
                           formatCurrency(product.discount)
                       ) : '-'}
                     </td>
-                    <td>{formatCurrency(product.totalTTC)}</td>
+                    <td>{formatCurrency(totalProduct)}</td>
                   </tr>
                 );
               })}
@@ -236,21 +193,21 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
           <div className="totals">
             <div className="total-row">
               <span className="total-label">Total HT:</span>
-              <span className="total-value">{formatCurrency(montantHT)}</span>
+              <span className="total-value">{formatCurrency(totalHT)}</span>
             </div>
             <div className="total-row">
               <span className="total-label">TVA ({invoice.taxRate}%):</span>
-              <span className="total-value">{formatCurrency(montantTVA)}</span>
+              <span className="total-value">{formatCurrency(totalTVA)}</span>
             </div>
-            {montantRemise > 0 && (
+            {totalDiscount > 0 && (
               <div className="total-row" style={{ color: '#e53e3e' }}>
                 <span className="total-label">Remise totale:</span>
-                <span className="total-value">-{formatCurrency(montantRemise)}</span>
+                <span className="total-value">-{formatCurrency(totalDiscount)}</span>
               </div>
             )}
             <div className="total-row final-total">
               <span className="total-label">TOTAL TTC:</span>
-              <span className="total-value">{formatCurrency(montantTTC)}</span>
+              <span className="total-value">{formatCurrency(totalTTC)}</span>
             </div>
             
             {/* Mention légale Article L224‑59 - Fond blanc sans encadré */}
@@ -263,11 +220,11 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
               </div>
             </div>
             {/* Acompte si applicable */}
-            {montantAcompte > 0 && (
+            {acompteAmount > 0 && (
               <>
                 <div className="total-row" style={{ marginTop: '10px' }}>
                   <span className="total-label">Acompte versé:</span>
-                  <span className="total-value" style={{ color: '#3182ce' }}>{formatCurrency(montantAcompte)}</span>
+                  <span className="total-value" style={{ color: '#3182ce' }}>{formatCurrency(acompteAmount)}</span>
                 </div>
                 <div className="total-row" style={{ 
                   backgroundColor: '#fff3cd', 
@@ -301,99 +258,9 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
           <p>Email: myconfort@gmail.com - SIRET: 824 313 530 00027</p>
         </footer>
       </div>
-
-      {/* PAGE 2 - CONDITIONS GÉNÉRALES DE VENTE */}
-      <div className="conditions-page">
-        <h1>CONDITIONS GÉNÉRALES DE VENTE</h1>
-        
-        <h2>1. DÉFINITIONS</h2>
-        <p>
-          Les présentes conditions générales de vente s'appliquent à toutes les ventes conclues par la société MYCONFORT, 
-          SARL au capital de 5000€, immatriculée au RCS de Paris sous le numéro 824 313 530, 
-          dont le siège social est situé 88 Avenue des Ternes, 75017 Paris.
-        </p>
-
-        <h2>2. PRIX ET MODALITÉS DE PAIEMENT</h2>
-        <h3>2.1 Prix</h3>
-        <p>
-          Les prix sont exprimés en euros toutes taxes comprises. Ils sont fermes et non révisables 
-          pendant leur durée de validité mais la société MYCONFORT se réserve le droit de les modifier 
-          à tout moment pour les commandes ultérieures.
-        </p>
-        
-        <h3>2.2 Modalités de paiement</h3>
-        <p>Le règlement s'effectue :</p>
-        <ul>
-          <li>Comptant à la commande par chèque, espèces ou virement bancaire</li>
-          <li>En plusieurs fois selon accord préalable</li>
-          <li>Un acompte peut être demandé à la commande</li>
-        </ul>
-
-        <h2>3. LIVRAISON</h2>
-        <h3>3.1 Délais de livraison</h3>
-        <p>
-          Les délais de livraison sont donnés à titre indicatif. Ils ne constituent pas un engagement 
-          ferme de la part de MYCONFORT. Les retards de livraison ne donnent pas droit à dommages et intérêts.
-        </p>
-        
-        <h3>3.2 Transport et risques</h3>
-        <p>
-          La marchandise voyage aux risques et périls de l'acheteur. Les réclamations concernant 
-          les avaries ou manquants lors du transport doivent être formulées auprès du transporteur 
-          dans les 48 heures suivant la livraison.
-        </p>
-
-        <h2>4. GARANTIES</h2>
-        <h3>4.1 Garantie légale</h3>
-        <p>
-          Tous nos produits bénéficient de la guarantee légale de conformité et de la garantie contre 
-          les vices cachés prévues par le Code de la consommation.
-        </p>
-        
-        <h3>4.2 Garantie commerciale</h3>
-        <p>
-          Une garantie commerciale spécifique peut s'appliquer selon les produits. 
-          Les modalités vous sont communiquées lors de la vente.
-        </p>
-
-        <h2>5. DROIT DE RÉTRACTATION</h2>
-        <p>
-          Conformément aux dispositions du Code de la consommation, vous disposez d'un délai 
-          de 14 jours à compter de la réception de votre commande pour exercer votre droit de rétractation 
-          sans avoir à justifier de motifs ni à payer de pénalités.
-        </p>
-
-        <h2>6. RÉCLAMATIONS</h2>
-        <p>
-          Toute réclamation doit être adressée par écrit à MYCONFORT dans un délai maximum de 8 jours 
-          après livraison. Passé ce délai, aucune réclamation ne sera prise en compte.
-        </p>
-
-        <h2>7. CLAUSE DE RÉSERVE DE PROPRIÉTÉ</h2>
-        <p>
-          La société MYCONFORT conserve la propriété des biens vendus jusqu'au paiement intégral 
-          du prix en principal et accessoires.
-        </p>
-
-        <h2>8. DONNÉES PERSONNELLES</h2>
-        <p>
-          Conformément à la loi "Informatique et Libertés" et au RGPD, vous disposez d'un droit d'accès, 
-          de rectification et de suppression des données vous concernant. 
-          Ces données sont utilisées uniquement dans le cadre de la relation commerciale.
-        </p>
-
-        <h2>9. LITIGES</h2>
-        <p>
-          En cas de litige, une solution amiable sera recherchée avant toute action judiciaire. 
-          À défaut, les tribunaux de Paris seront seuls compétents.
-        </p>
-
-        <h2>10. ACCEPTATION</h2>
-        <p>
-          Le fait de passer commande implique l'acceptation pleine et entière des présentes 
-          conditions générales de vente.
-        </p>
-      </div>
+      
+      {/* Conditions générales sur page séparée pour l'impression */}
+      <ConditionsGenerales />
     </div>
   );
 };

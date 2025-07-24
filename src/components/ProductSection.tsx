@@ -184,9 +184,12 @@ export const ProductSection: React.FC<ProductSectionProps> = ({
       category: newProduct.category,
       quantity: newProduct.quantity,
       unitPrice: newProduct.unitPrice,
+      priceHT: calculateHT(newProduct.priceTTC, taxRate),
       priceTTC: newProduct.priceTTC,
       discount: 0,
       discountType: 'percent',
+      totalHT: calculateHT(newProduct.priceTTC, taxRate) * newProduct.quantity,
+      totalTTC: newProduct.priceTTC * newProduct.quantity,
       autoCalculateHT: isCustomProduct ? false : (selectedCatalogProduct?.autoCalculateHT || false)
     };
 

@@ -14,14 +14,18 @@ export interface Client {
 }
 
 export interface Product {
+  id?: string;
   name: string;
+  category?: string;
   quantity: number;
   priceHT: number;
   priceTTC: number;
+  unitPrice?: number;
   discount: number;
-  discountType: 'percentage' | 'fixed';
+  discountType: 'percent' | 'fixed';
   totalHT: number;
   totalTTC: number;
+  autoCalculateHT?: boolean;
 }
 
 export interface ProductCatalog {
@@ -55,6 +59,7 @@ export interface Invoice {
   clientAddress: string;
   clientPostalCode: string;
   clientCity: string;
+  clientDoorCode?: string;
   
   // Produits
   products: Product[];
@@ -73,14 +78,17 @@ export interface Invoice {
   
   // Livraison
   deliveryMethod: string;
+  deliveryNotes: string;
   
   // Signature
-  signature?: string;
+  signature: string;
   isSigned: boolean;
   signatureDate?: string;
   
-  // Notes
-  invoiceNotes?: string;
+  // Notes et conseiller
+  invoiceNotes: string;
+  advisorName: string;
+  termsAccepted: boolean;
   
   // Métadonnées
   createdAt: string;
