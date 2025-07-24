@@ -6,7 +6,7 @@ import { ProductSection } from './components/ProductSection';
 import { ClientListModal } from './components/ClientListModal';
 import { InvoicesListModal } from './components/InvoicesListModal';
 import { ProductsListModal } from './components/ProductsListModal';
-import { PDFPreviewModal } from './components/PDFPreviewModal';
+import PDFPreviewModal from './components/PDFPreviewModal';
 import { PDFGuideModal } from './components/PDFGuideModal';
 import { GoogleDriveModal } from './components/GoogleDriveModal';
 import { PayloadDebugModal } from './components/PayloadDebugModal';
