@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Download, Printer, FileText, Share2, Loader, UploadCloud as CloudUpload } from 'lucide-react';
-import { InvoicePDF } from './InvoicePDF';
+import { InvoicePreview } from './InvoicePreview';
 import { Invoice } from '../types';
 import html2canvas from 'html2canvas';
 import { AdvancedPDFService } from '../services/advancedPdfService';
@@ -135,8 +135,8 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden">
-        {/* Header */}
-        <div className="flex justify-between items-center p-4 border-b bg-blue-600 text-white">
+        {/* Header - no-print pour masquer à l'impression */}
+        <div className="no-print flex justify-between items-center p-4 border-b bg-blue-600 text-white">
           <div className="flex items-center space-x-3">
             <FileText className="w-6 h-6" />
             <h3 className="text-xl font-bold">Aperçu de la facture {invoice.invoiceNumber}</h3>
@@ -213,7 +213,7 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
 
         {/* Indicateur de partage en cours */}
         {isSharing && shareStep && (
-          <div className="bg-purple-50 border-b border-purple-200 p-3">
+          <div className="no-print bg-purple-50 border-b border-purple-200 p-3">
             <div className="flex items-center space-x-3">
               <Loader className="w-5 h-5 animate-spin text-purple-600" />
               <div>
@@ -226,7 +226,7 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
 
         {/* Indicateur d'upload en cours */}
         {isUploading && uploadStep && (
-          <div className="bg-blue-50 border-b border-blue-200 p-3">
+          <div className="no-print bg-blue-50 border-b border-blue-200 p-3">
             <div className="flex items-center space-x-3">
               <Loader className="w-5 h-5 animate-spin text-blue-600" />
               <div>
@@ -238,7 +238,7 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
         )}
 
         {/* Instructions pour le partage */}
-        <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border-b p-3">
+        <div className="no-print bg-gradient-to-r from-purple-50 to-indigo-50 border-b p-3">
           <div className="flex items-center space-x-2 text-sm">
             <Share2 className="w-4 h-4 text-purple-600" />
             <span className="font-semibold text-purple-900">Partage d'aperçu :</span>
@@ -258,7 +258,7 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
         </div>
 
         {/* Instructions pour Google Drive */}
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b p-3">
+        <div className="no-print bg-gradient-to-r from-blue-50 to-indigo-50 border-b p-3">
           <div className="flex items-center space-x-2 text-sm">
             <CloudUpload className="w-4 h-4 text-blue-600" />
             <span className="font-semibold text-blue-900">Google Drive :</span>
@@ -274,10 +274,10 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
           </div>
         </div>
 
-        {/* Content */}
-        <div className="overflow-auto max-h-[calc(90vh-220px)] bg-gray-100 p-4">
+        {/* Content - FORMAT UNIQUE : InvoicePreview */}
+        <div className="no-print overflow-auto max-h-[calc(90vh-220px)] bg-gray-100 p-4">
           <div id="pdf-preview-content">
-            <InvoicePDF invoice={invoice} isPreview={true} />
+            <InvoicePreview invoice={invoice} className="print-preview" />
           </div>
         </div>
       </div>

@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Aperçu Facture MYCONFORT</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f5f5;
+    }
+    
+    .facture-apercu {
+      background: white;
+      max-width: 800px;
+      margin: 0 auto;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    .invoice-container {
+      padding: 30px;
+    }
+    
+    /* Header */
+    .header {
+      text-align: center;
+      background: #477A0C;
+      color: white;
+      padding: 20px;
+      margin: -30px -30px 30px -30px;
+    }
+    
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    
+    .subtitle {
+      margin: 5px 0 0 0;
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    
+    /* Main Info */
+    .main-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 30px;
+      border-bottom: 2px solid #477A0C;
+      padding-bottom: 20px;
+    }
+    
+    .company-details h3 {
+      color: #477A0C;
+      font-size: 18px;
+      margin: 0 0 10px 0;
+    }
+    
+    .company-details p {
+      margin: 3px 0;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    
+    .invoice-meta {
+      text-align: right;
+    }
+    
+    .meta-item {
+      margin: 5px 0;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    
+    .meta-label {
+      font-weight: bold;
+      color: #477A0C;
+    }
+    
+    /* Section headers */
+    .section-header {
+      background: #477A0C;
+      color: white;
+      padding: 10px 15px;
+      font-weight: bold;
+      font-size: 14px;
+      margin: 20px 0 15px 0;
+      text-align: center;
+    }
+    
+    /* Client Grid */
+    .client-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px 30px;
+      margin-bottom: 20px;
+    }
+    
+    .client-field {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #eee;
+      padding: 8px 0;
+    }
+    
+    .client-field .label {
+      font-weight: bold;
+      color: #666;
+      font-size: 12px;
+    }
+    
+    .client-field .value {
+      color: #333;
+      font-size: 12px;
+    }
+    
+    /* Products Section */
+    .products-section {
+      margin: 30px 0;
+    }
+    
+    .products-title {
+      background: #477A0C;
+      color: white;
+      padding: 12px 15px;
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+    
+    /* Signature compacte */
+    .signature-box-compact {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 6px;
+      padding: 10px;
+      margin-bottom: 15px;
+      text-align: right;
+      max-width: 300px;
+      margin-left: auto;
+    }
+    
+    .signature-label-small {
+      font-size: 11px;
+      color: #666;
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+    
+    .signature-compact {
+      max-width: 80px;
+      max-height: 60px;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      border: 1px solid #ddd;
+      padding: 2px;
+      border-radius: 3px;
+      background: white;
+    }
+    
+    /* Products Table */
+    .products-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    
+    .products-table th,
+    .products-table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+      font-size: 12px;
+    }
+    
+    .products-table th {
+      background: #477A0C;
+      color: white;
+      font-weight: bold;
+    }
+    
+    .products-table tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+    
+    /* Totals */
+    .totals {
+      max-width: 400px;
+      margin-left: auto;
+    }
+    
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .total-label {
+      font-weight: bold;
+      color: #666;
+    }
+    
+    .total-value {
+      font-weight: bold;
+      color: #333;
+    }
+    
+    .final-total {
+      background: #f0f9ff;
+      padding: 10px;
+      border: 2px solid #477A0C;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+    
+    .final-total .total-label,
+    .final-total .total-value {
+      color: #477A0C;
+      font-size: 16px;
+    }
+    
+    /* Info sections */
+    .info-section {
+      margin: 20px 0;
+    }
+    
+    .info-header {
+      background: #477A0C;
+      color: white;
+      padding: 8px 15px;
+      font-weight: bold;
+      font-size: 13px;
+    }
+    
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 15px;
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-top: none;
+    }
+    
+    .info-label {
+      font-weight: bold;
+      color: #666;
+      font-size: 12px;
+    }
+    
+    .info-value {
+      color: #333;
+      font-size: 12px;
+    }
+    
+    /* Legal mention */
+    .legal-mention-simple {
+      background: #fff9c4;
+      border: 1px solid #f7dc6f;
+      border-radius: 5px;
+      padding: 10px;
+      margin: 15px 0;
+      font-size: 10px;
+      line-height: 1.4;
+    }
+    
+    .legal-title {
+      font-weight: bold;
+      color: #8b4513;
+      margin-bottom: 5px;
+    }
+    
+    .legal-text {
+      color: #666;
+    }
+    
+    /* Footer */
+    .footer {
+      text-align: center;
+      background: #477A0C;
+      color: white;
+      padding: 20px;
+      margin: 30px -30px -30px -30px;
+    }
+    
+    .footer h3 {
+      margin: 0 0 10px 0;
+      font-size: 18px;
+    }
+    
+    .footer p {
+      margin: 3px 0;
+      font-size: 12px;
+      opacity: 0.9;
+    }
+    
+    /* Conditions générales */
+    .conditions-page {
+      page-break-before: always;
+      background: white;
+      padding: 30px;
+      margin-top: 50px;
+      border-top: 5px solid #477A0C;
+    }
+    
+    .conditions-page h1 {
+      color: #477A0C;
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 30px;
+      border-bottom: 2px solid #477A0C;
+      padding-bottom: 10px;
+    }
+    
+    .conditions-page h2 {
+      color: #477A0C;
+      font-size: 16px;
+      margin: 25px 0 15px 0;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 5px;
+    }
+    
+    .conditions-page h3 {
+      font-size: 14px;
+      margin: 20px 0 10px 0;
+    }
+    
+    .conditions-page p,
+    .conditions-page li {
+      font-size: 12px;
+      line-height: 1.5;
+      margin: 8px 0;
+      text-align: justify;
+    }
+    
+    .conditions-page ul {
+      margin: 10px 0 10px 25px;
+    }
+    
+    /* Bouton d'impression */
+    .print-button {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #477A0C;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+    }
+    
+    .print-button:hover {
+      background: #3a6509;
+    }
+    
+    /* Styles d'impression */
+    @media print {
+      body { margin: 0; padding: 0; background: white; }
+      .print-button { display: none; }
+      .facture-apercu { box-shadow: none; border-radius: 0; }
+      .invoice-container { padding: 0; }
+      .header { margin: 0 0 30px 0; }
+      .footer { margin: 30px 0 0 0; }
+      .conditions-page { page-break-before: always; margin-top: 0; border-top: none; }
+      .signature-compact {
+        max-width: 2cm !important;
+        max-height: 3cm !important;
+        width: 2cm !important;
+        height: 3cm !important;
+      }
+      @page { size: A4; margin: 15mm; }
+    }
+  </style>
+</head>
+<body>
+  <button class="print-button" onclick="window.print()">🖨️ Imprimer la facture</button>
+  
+  <div class="facture-apercu">
+    <div class="invoice-container">
+      <!-- Header -->
+      <header class="header">
+        <h1>MYCONFORT</h1>
+        <p class="subtitle">Facturation professionnelle avec signature électronique</p>
+      </header>
+
+      <!-- Main Information -->
+      <section class="main-info">
+        <div class="company-details">
+          <h3>MYCONFORT</h3>
+          <p>88 Avenue des Ternes</p>
+          <p>75017 Paris, France</p>
+          <p>SIRET: 824 313 530 00027</p>
+          <p>Tél: 04 68 50 41 45</p>
+          <p>Email: myconfort@gmail.com</p>
+          <p>Site web: https://www.htconfort.com</p>
+        </div>
+        <div class="invoice-meta">
+          <div class="meta-item">
+            <span class="meta-label">N° Facture:</span>
+            <span class="meta-value">2025-4556</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Date:</span>
+            <span class="meta-value">23/07/2025</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Lieu:</span>
+            <span class="meta-value">Salon Paris</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Client Information -->
+      <div class="section-header">INFORMATIONS CLIENT</div>
+      <div class="client-grid">
+        <div class="client-field">
+          <span class="label">Nom complet</span>
+          <span class="value">Jean Dupont</span>
+        </div>
+        <div class="client-field">
+          <span class="label">Adresse</span>
+          <span class="value">123 Rue de la Paix</span>
+        </div>
+        <div class="client-field">
+          <span class="label">Code postal</span>
+          <span class="value">75001</span>
+        </div>
+        <div class="client-field">
+          <span class="label">Ville</span>
+          <span class="value">Paris</span>
+        </div>
+        <div class="client-field">
+          <span class="label">Email</span>
+          <span class="value">jean.dupont@email.com</span>
+        </div>
+        <div class="client-field">
+          <span class="label">Téléphone</span>
+          <span class="value">01 23 45 67 89</span>
+        </div>
+      </div>
+
+      <!-- Logistics Information -->
+      <section class="info-section">
+        <div class="info-header">INFORMATIONS LOGISTIQUES</div>
+        <div class="info-row">
+          <span class="info-label">Mode de livraison:</span>
+          <span class="info-value">Livraison à domicile</span>
+        </div>
+      </section>
+
+      <!-- Payment Information -->
+      <section class="info-section">
+        <div class="info-header">MODE DE RÈGLEMENT</div>
+        <div class="info-row">
+          <span class="info-label">Méthode de paiement:</span>
+          <span class="info-value">Chèque</span>
+        </div>
+      </section>
+
+      <!-- Products Section -->
+      <section class="products-section">
+        <div class="products-title">Produits & Tarification</div>
+        
+        <!-- Signature Box - Version compacte -->
+        <div class="signature-box-compact">
+          <div class="signature-label-small">Signature client:</div>
+          <div style="width: 80px; height: 60px; border: 1px solid #ddd; background: #f9f9f9; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #999; border-radius: 3px;">
+            [Signature électronique 2x3cm]
+          </div>
+        </div>
+
+        <table class="products-table">
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th>Quantité</th>
+              <th>PU HT</th>
+              <th>PU TTC</th>
+              <th>Remise</th>
+              <th>Total TTC</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Matelas Premium Confort 160x200</td>
+              <td>1</td>
+              <td>800,00 €</td>
+              <td>960,00 €</td>
+              <td>10%</td>
+              <td>864,00 €</td>
+            </tr>
+            <tr>
+              <td>Sommier à lattes 160x200</td>
+              <td>1</td>
+              <td>200,00 €</td>
+              <td>240,00 €</td>
+              <td>-</td>
+              <td>240,00 €</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="totals">
+          <div class="total-row">
+            <span class="total-label">Total HT:</span>
+            <span class="total-value">920,00 €</span>
+          </div>
+          <div class="total-row">
+            <span class="total-label">TVA (20%):</span>
+            <span class="total-value">184,00 €</span>
+          </div>
+          <div class="total-row" style="color: #e53e3e;">
+            <span class="total-label">Remise totale:</span>
+            <span class="total-value">-96,00 €</span>
+          </div>
+          <div class="total-row final-total">
+            <span class="total-label">TOTAL TTC:</span>
+            <span class="total-value">1 104,00 €</span>
+          </div>
+          
+          <!-- Mention légale Article L224‑59 -->
+          <div class="legal-mention-simple">
+            <div class="legal-title">
+              ⚖️ Article L224‑59 du Code de la consommation
+            </div>
+            <div class="legal-text">
+              « Avant la conclusion de tout contrat entre un consommateur et un professionnel à l'occasion d'une foire, d'un salon […] le professionnel informe le consommateur qu'il ne dispose pas d'un délai de rétractation. »
+            </div>
+          </div>
+          
+          <!-- Acompte si applicable -->
+          <div class="total-row" style="margin-top: 10px;">
+            <span class="total-label">Acompte versé:</span>
+            <span class="total-value" style="color: #3182ce;">300,00 €</span>
+          </div>
+          <div class="total-row" style="background-color: #fff3cd; padding: 8px; border-radius: 4px; margin-top: 5px; color: #ff8c00;">
+            <span class="total-label" style="font-weight: bold;">RESTE À PAYER:</span>
+            <span class="total-value" style="font-weight: bold;">804,00 €</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Notes -->
+      <section class="info-section">
+        <div class="info-header">REMARQUES</div>
+        <p style="padding: 10px; font-size: 13px;">Livraison prévue sous 2 à 3 semaines. Merci de prévoir un accès facile pour la livraison.</p>
+      </section>
+
+      <!-- Footer -->
+      <footer class="footer">
+        <h3>🌸 MYCONFORT</h3>
+        <p>Merci pour votre confiance !</p>
+        <p>Votre spécialiste en matelas et literie de qualité</p>
+        <p>88 Avenue des Ternes, 75017 Paris - Tél: 04 68 50 41 45</p>
+        <p>Email: myconfort@gmail.com - SIRET: 824 313 530 00027</p>
+      </footer>
+    </div>
+  </div>
+
+  <!-- PAGE 2 - CONDITIONS GÉNÉRALES DE VENTE -->
+  <div class="conditions-page">
+    <h1>CONDITIONS GÉNÉRALES DE VENTE</h1>
+    
+    <h2>1. DÉFINITIONS</h2>
+    <p>
+      Les présentes conditions générales de vente s'appliquent à toutes les ventes conclues par la société MYCONFORT, 
+      SARL au capital de 5000€, immatriculée au RCS de Paris sous le numéro 824 313 530, 
+      dont le siège social est situé 88 Avenue des Ternes, 75017 Paris.
+    </p>
+
+    <h2>2. PRIX ET MODALITÉS DE PAIEMENT</h2>
+    <h3>2.1 Prix</h3>
+    <p>
+      Les prix sont exprimés en euros toutes taxes comprises. Ils sont fermes et non révisables 
+      pendant leur durée de validité mais la société MYCONFORT se réserve le droit de les modifier 
+      à tout moment pour les commandes ultérieures.
+    </p>
+    
+    <h3>2.2 Modalités de paiement</h3>
+    <p>Le règlement s'effectue :</p>
+    <ul>
+      <li>Comptant à la commande par chèque, espèces ou virement bancaire</li>
+      <li>En plusieurs fois selon accord préalable</li>
+      <li>Un acompte peut être demandé à la commande</li>
+    </ul>
+
+    <h2>3. LIVRAISON</h2>
+    <h3>3.1 Délais de livraison</h3>
+    <p>
+      Les délais de livraison sont donnés à titre indicatif. Ils ne constituent pas un engagement 
+      ferme de la part de MYCONFORT. Les retards de livraison ne donnent pas droit à dommages et intérêts.
+    </p>
+    
+    <h3>3.2 Transport et risques</h3>
+    <p>
+      La marchandise voyage aux risques et périls de l'acheteur. Les réclamations concernant 
+      les avaries ou manquants lors du transport doivent être formulées auprès du transporteur 
+      dans les 48 heures suivant la livraison.
+    </p>
+
+    <h2>4. GARANTIES</h2>
+    <h3>4.1 Garantie légale</h3>
+    <p>
+      Tous nos produits bénéficient de la guarantee légale de conformité et de la garantie contre 
+      les vices cachés prévues par le Code de la consommation.
+    </p>
+    
+    <h3>4.2 Garantie commerciale</h3>
+    <p>
+      Une garantie commerciale spécifique peut s'appliquer selon les produits. 
+      Les modalités vous sont communiquées lors de la vente.
+    </p>
+
+    <h2>5. DROIT DE RÉTRACTATION</h2>
+    <p>
+      Conformément aux dispositions du Code de la consommation, vous disposez d'un délai 
+      de 14 jours à compter de la réception de votre commande pour exercer votre droit de rétractation 
+      sans avoir à justifier de motifs ni à payer de pénalités.
+    </p>
+
+    <h2>6. RÉCLAMATIONS</h2>
+    <p>
+      Toute réclamation doit être adressée par écrit à MYCONFORT dans un délai maximum de 8 jours 
+      après livraison. Passé ce délai, aucune réclamation ne sera prise en compte.
+    </p>
+
+    <h2>7. CLAUSE DE RÉSERVE DE PROPRIÉTÉ</h2>
+    <p>
+      La société MYCONFORT conserve la propriété des biens vendus jusqu'au paiement intégral 
+      du prix en principal et accessoires.
+    </p>
+
+    <h2>8. DONNÉES PERSONNELLES</h2>
+    <p>
+      Conformément à la loi "Informatique et Libertés" et au RGPD, vous disposez d'un droit d'accès, 
+      de rectification et de suppression des données vous concernant. 
+      Ces données sont utilisées uniquement dans le cadre de la relation commerciale.
+    </p>
+
+    <h2>9. LITIGES</h2>
+    <p>
+      En cas de litige, une solution amiable sera recherchée avant toute action judiciaire. 
+      À défaut, les tribunaux de Paris seront seuls compétents.
+    </p>
+
+    <h2>10. ACCEPTATION</h2>
+    <p>
+      Le fait de passer commande implique l'acceptation pleine et entière des présentes 
+      conditions générales de vente.
+    </p>
+  </div>
+</body>
+</html>

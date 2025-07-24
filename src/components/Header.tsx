@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, Package, Building2, Archive, UploadCloud as CloudUpload, Bug } from 'lucide-react';
+import { Users, Package, Building2, Archive, UploadCloud as CloudUpload, Bug, FileText } from 'lucide-react';
 
 interface HeaderProps {
   onGeneratePDF: () => void;
@@ -47,6 +47,15 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="hidden md:inline">Debug</span>
             </button>
           )}
+          
+          <button
+            onClick={onGeneratePDF}
+            className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 px-3 md:px-4 py-2 md:py-3 rounded-lg flex items-center space-x-2 font-bold shadow-md transition-all hover:scale-105 text-white"
+            title="Aperçu PDF de la facture"
+          >
+            <FileText size={18} />
+            <span className="hidden md:inline">Aperçu PDF</span>
+          </button>
           
           <button
             onClick={onShowProducts}
