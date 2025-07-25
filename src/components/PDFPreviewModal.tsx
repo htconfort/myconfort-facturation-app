@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { X, Download, Printer, FileText, Share2, Loader, UploadCloud as CloudUpload, AlertCircle } from 'lucide-react';
-import { InvoicePreview } from './InvoicePreview';
-import { Invoice } from '../types';
+import { InvoicePreviewClean } from './InvoicePreviewClean';
+import { InvoicePreviewData } from '../shared/invoiceUtils';
+import { convertPreviewDataToInvoice } from '../utils/typeAdapters';
 import html2canvas from 'html2canvas';
 import { AdvancedPDFService } from '../services/advancedPdfService';
 import { GoogleDriveService } from '../services/googleDriveService';
@@ -9,7 +10,7 @@ import { GoogleDriveService } from '../services/googleDriveService';
 interface PDFPreviewModalProps {
   isOpen: boolean;
   onClose: () => void;
-  invoice: Invoice;
+  invoice: InvoicePreviewData;
   onDownload: () => Promise<void>;
 }
 
@@ -179,12 +180,14 @@ const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
 
     try {
       // Generate PDF blob
-      const pdfBlob = await AdvancedPDFService.getPDFBlob(invoice);
+      // 🔄 Conversion pour compatibilité avec les services existants
+      const convertedInvoice = convertPreviewDataToInvoice(invoice);
+      const pdfBlob = await AdvancedPDFService.getPDFBlob(convertedInvoice);
       
       setLoadingMessage('📤 Envoi vers Google Drive...');
       
       // Upload to Google Drive
-      const success = await GoogleDriveService.uploadPDFToGoogleDrive(invoice, pdfBlob);
+      const success = await GoogleDriveService.uploadPDFToGoogleDrive(convertedInvoice, pdfBlob);
       
       if (success) {
         setLoadingMessage('✅ PDF envoyé avec succès !');
@@ -364,7 +367,7 @@ const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
         {/* Content - FORMAT UNIQUE : InvoicePreview */}
         <div className="no-print overflow-auto max-h-[calc(90vh-220px)] bg-gray-100 p-4">
           <div id="pdf-preview-content">
-            <InvoicePreview invoice={invoice} className="print-preview" />
+            <InvoicePreviewClean invoice={invoice} className="print-preview" />
           </div>
         </div>
       </div>

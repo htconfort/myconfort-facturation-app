@@ -17,9 +17,12 @@ import { Toast } from './components/ui/Toast';
 import { Invoice, Client, ToastType } from './types';
 import { generateInvoiceNumber } from './utils/calculations';
 import { saveClients, loadClients, saveDraft, loadDraft, saveClient, saveInvoice, loadInvoices, deleteInvoice } from './utils/storage';
-import { AdvancedPDFService } from './services/advancedPdfService'; // Keep this import
+import { AdvancedPDFService } from './services/advancedPdfService';
 import { N8nWebhookService } from './services/n8nWebhookService';
-// import { PDFService } from './services/pdfService'; // REMOVED: No longer needed, using AdvancedPDFService
+import { PDFActions } from './components/PDFActions';
+import { GoogleDriveService } from './services/googleDriveService';
+// 🆕 IMPORT DU MODULE PARTAGÉ SANS DÉPENDANCES CIRCULAIRES
+import { prepareInvoicePreviewData } from './shared/invoiceUtils';
 
 function App() {
   const [invoice, setInvoice] = useState<Invoice>({
@@ -427,6 +430,26 @@ function App() {
   // 🔒 VÉRIFICATION DES CHAMPS OBLIGATOIRES POUR L'AFFICHAGE
   const validation = validateMandatoryFields();
 
+  // 🔗 Callback pour upload Google Drive depuis PDFActions
+  const handleUploadToDrive = async (base64: string, _filename: string) => {
+    try {
+      // Créer un blob à partir du base64 pour utiliser l'API existante
+      const byteCharacters = atob(base64);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const pdfBlob = new Blob([byteArray], { type: 'application/pdf' });
+      
+      await GoogleDriveService.uploadPDFToGoogleDrive(invoice, pdfBlob);
+      showToast('✅ PDF sauvegardé sur Google Drive', 'success');
+    } catch (error) {
+      console.error('Erreur upload Google Drive:', error);
+      throw error; // Relancer pour que PDFActions gère l'affichage d'erreur
+    }
+  };
+
   return (
     <div className="min-h-screen font-['Inter'] text-gray-100" style={{ backgroundColor: '#14281D' }}>
       <Header
@@ -627,7 +650,7 @@ function App() {
             {/* Ajout de l'ID pour la référence unique */}
             <div id="invoice-preview-section" className="bg-[#F2EFE2] rounded-lg p-4">
               <div className="border border-gray-300 rounded-lg overflow-hidden">
-                <InvoicePreview invoice={invoice} />
+                <InvoicePreview invoice={prepareInvoicePreviewData(invoice)} />
               </div>
             </div>
           </div>
@@ -672,27 +695,20 @@ function App() {
                   <span>💾</span>
                   <span>ENREGISTRER FACTURE</span>
                 </button>
-                <button
-                  onClick={handleDownloadPDF}
-                  className="px-6 py-3 rounded-xl flex items-center space-x-3 font-bold shadow-lg transform transition-all hover:scale-105 bg-green-600 hover:bg-green-700 text-white"
-                >
-                  <span>⬇️</span>
-                  <span>TÉLÉCHARGER PDF</span>
-                </button>
-                <button
-                  onClick={handlePrintWifi}
-                  className="px-6 py-3 rounded-xl flex items-center space-x-3 font-bold shadow-lg transform transition-all hover:scale-105 bg-orange-600 hover:bg-orange-700 text-white"
-                  title="Imprimer la facture directement"
-                >
-                  <span>🖨️</span>
-                  <span>IMPRIMER</span>
-                </button>
+                
+                {/* 🆕 Nouveau composant unifié pour PDF */}
+                <PDFActions 
+                  invoice={invoice} 
+                  onUploadToDrive={handleUploadToDrive}
+                  className="flex-wrap"
+                />
+                
                 <button
                   onClick={handleSendPDF}
                   className="px-6 py-3 rounded-xl flex items-center space-x-3 font-bold shadow-lg transform transition-all hover:scale-105 bg-purple-600 hover:bg-purple-700 text-white"
                 >
                   <span>📧</span>
-                  <span>ENVOYER PAR EMAIL/DRIVE</span>
+                  <span>ENVOYER PAR EMAIL</span>
                 </button>
               </div>
             </div>
@@ -724,7 +740,7 @@ function App() {
       <PDFPreviewModal
         isOpen={showPDFPreview}
         onClose={() => setShowPDFPreview(false)}
-        invoice={invoice}
+        invoice={prepareInvoicePreviewData(invoice)}
         onDownload={handleDownloadPDF}
       />
 

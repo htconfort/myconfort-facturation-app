@@ -5,7 +5,8 @@ import {
   calculateProductTotal, 
   calculateInvoiceTotals,
   formatDate,
-  COMPANY_INFO
+  COMPANY_INFO,
+  INVOICE_PREVIEW_CLASSES
 } from '../shared/invoiceUtils';
 import { ConditionsGenerales } from './ConditionsGenerales';
 
@@ -14,63 +15,56 @@ interface InvoicePreviewProps {
   className?: string;
 }
 
-export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ 
+/**
+ * 🧾 COMPOSANT APERÇU FACTURE - NOUVELLE VERSION SANS DÉPENDANCES CIRCULAIRES
+ * ========================================================================
+ * Architecture propre avec calculs dans le module partagé
+ * Utilise uniquement InvoicePreviewData (pas Invoice complète)
+ */
+export const InvoicePreviewClean: React.FC<InvoicePreviewProps> = ({ 
   invoice, 
   className = "" 
 }) => {
-  // Calculer le total TTC
-  const totalTTC = invoice.products.reduce((sum, product) => {
-    return sum + calculateProductTotal(
-      product.quantity,
-      product.priceTTC,
-      product.discount,
-      product.discountType === 'percent' ? 'percent' : 'fixed'
-    );
-  }, 0);
+  // 🧮 Calcul des totaux avec useMemo pour optimisation
+  const totals = useMemo(() => 
+    calculateInvoiceTotals(invoice.products, invoice.taxRate, invoice.montantAcompte),
+    [invoice.products, invoice.taxRate, invoice.montantAcompte]
+  );
 
-  // Calculer l'acompte et le montant restant
-  const acompteAmount = invoice.montantAcompte || 0;
-  const montantRestant = totalTTC - acompteAmount;
-
-  // Calculer les totaux pour l'affichage
-  const totalHT = totalTTC / (1 + (invoice.taxRate / 100));
-  const totalTVA = totalTTC - totalHT;
-  const totalDiscount = invoice.products.reduce((sum, product) => {
-    const originalTotal = product.priceTTC * product.quantity;
-    const discountedTotal = calculateProductTotal(
-      product.quantity,
-      product.priceTTC,
-      product.discount,
-      product.discountType === 'percent' ? 'percent' : 'fixed'
-    );
-    return sum + (originalTotal - discountedTotal);
-  }, 0);
+  // 📊 Données dérivées pour l'affichage
+  const hasDiscount = totals.totalDiscount > 0;
+  const hasDeposit = invoice.montantAcompte > 0;
+  const hasSignature = !!invoice.signature;
 
   return (
     <div 
       id="facture-apercu" 
-      className={`facture-apercu ultra-compact ${className}`}
+      className={`${INVOICE_PREVIEW_CLASSES.container} ${className}`}
     >
       <div className="invoice-container">
         {/* Header compact avec bouton SIGNÉE à droite */}
-        <header className="invoice-header-compact">
+        <header className={INVOICE_PREVIEW_CLASSES.header}>
           <div>
-            <h1 style={{ fontSize: '20px', margin: '0', color: '#477A0C' }}>MYCONFORT</h1>
-            <p style={{ fontSize: '11px', margin: '2px 0', color: '#666' }}>Facturation professionnelle avec signature électronique</p>
+            <h1 style={{ fontSize: '20px', margin: '0', color: '#477A0C' }}>{COMPANY_INFO.name}</h1>
+            <p style={{ fontSize: '11px', margin: '2px 0', color: '#666' }}>
+              Facturation professionnelle avec signature électronique
+            </p>
           </div>
-          {invoice.signature && (
+          {hasSignature && (
             <div className="signed-badge-right">✓ SIGNÉE</div>
           )}
         </header>
 
-        {/* Main Information - Ultra compact */}
+        {/* Company & Invoice Information */}
         <section className="main-info-compact">
           <div className="company-details-compact">
-            <h3 style={{ fontSize: '12px', margin: '0 0 5px 0', color: '#477A0C' }}>MYCONFORT</h3>
+            <h3 style={{ fontSize: '12px', margin: '0 0 5px 0', color: '#477A0C' }}>
+              {COMPANY_INFO.name}
+            </h3>
             <p style={{ fontSize: '9px', margin: '1px 0', lineHeight: '1.2' }}>
-              88 Avenue des Ternes • 75017 Paris, France<br/>
-              SIRET: 824 313 530 00027 • Tél: 04 68 50 41 45<br/>
-              Email: myconfort@gmail.com • https://www.htconfort.com
+              {COMPANY_INFO.address} • {COMPANY_INFO.postalCode} {COMPANY_INFO.city}, {COMPANY_INFO.country}<br/>
+              SIRET: {COMPANY_INFO.siret} • Tél: {COMPANY_INFO.phone}<br/>
+              Email: {COMPANY_INFO.email} • {COMPANY_INFO.website}
             </p>
           </div>
           <div className="invoice-meta-compact">
@@ -78,7 +72,7 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
               <strong>N° Facture:</strong> {invoice.invoiceNumber}
             </div>
             <div style={{ fontSize: '10px', marginBottom: '3px' }}>
-              <strong>Date:</strong> {new Date(invoice.invoiceDate).toLocaleDateString('fr-FR')}
+              <strong>Date:</strong> {formatDate(invoice.invoiceDate)}
             </div>
             {invoice.eventLocation && (
               <div style={{ fontSize: '10px', marginBottom: '3px' }}>
@@ -88,9 +82,15 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
           </div>
         </section>
 
-        {/* Client Information - Compact et vert */}
-        <div className="section-header-green" style={{ padding: '8px 15px', margin: '10px 0 5px 0', fontSize: '12px' }}>INFORMATIONS CLIENT</div>
-        <div className="client-grid-compact">
+        {/* Client Information */}
+        <div className="section-header-green" style={{ 
+          padding: '8px 15px', 
+          margin: '10px 0 5px 0', 
+          fontSize: '12px' 
+        }}>
+          INFORMATIONS CLIENT
+        </div>
+        <div className={INVOICE_PREVIEW_CLASSES.clientSection}>
           <div className="client-field-compact">
             <span className="label-compact">Nom:</span>
             <span className="value-compact">{invoice.clientName}</span>
@@ -109,7 +109,7 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
           </div>
           <div className="client-field-compact">
             <span className="label-compact">Code porte:</span>
-            <span className="value-compact">{invoice.clientDoorCode}</span>
+            <span className="value-compact">{invoice.clientDoorCode || '-'}</span>
           </div>
           <div className="client-field-compact">
             <span className="label-compact">Email:</span>
@@ -121,18 +121,29 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
           </div>
         </div>
 
-        {/* Payment and Delivery Information - Compact */}
+        {/* Payment and Delivery Information */}
         <section className="info-section-compact">
           <div className="info-header-compact">MODE DE RÈGLEMENT & LIVRAISON</div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', margin: '5px 0' }}>
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            fontSize: '10px', 
+            margin: '5px 0' 
+          }}>
             <span><strong>Paiement:</strong> {invoice.paymentMethod || 'Non spécifié'}</span>
             <span><strong>Livraison:</strong> {invoice.deliveryMethod || 'Non spécifié'}</span>
           </div>
-          <div style={{ fontSize: '9px', color: '#666', fontStyle: 'italic', textAlign: 'center', margin: '3px 0' }}>
+          <div style={{ 
+            fontSize: '9px', 
+            color: '#666', 
+            fontStyle: 'italic', 
+            textAlign: 'center', 
+            margin: '3px 0' 
+          }}>
             Livraison réalisée au pied de l'immeuble ou au portail
           </div>
           <div style={{ fontSize: '10px', textAlign: 'center', margin: '3px 0' }}>
-            <strong>Signature client:</strong> {invoice.signature ? '✓ Signature électronique enregistrée' : 'En attente de signature'}
+            <strong>Signature client:</strong> {hasSignature ? '✓ Signature électronique enregistrée' : 'En attente de signature'}
           </div>
         </section>
 
@@ -140,17 +151,21 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
         <section className="products-section">
           <div className="products-title">Produits & Tarification</div>
           
-          {/* Signature Box - Clean and Professional */}
-          {invoice.signature && (
-            <div className="signature-box">
+          {/* Signature Box */}
+          {hasSignature && (
+            <div className={INVOICE_PREVIEW_CLASSES.signatureBox}>
               <div className="signature-label">SIGNATURE CLIENT</div>
               <div className="signature-placeholder">
-                <img src={invoice.signature} alt="Signature électronique" style={{ maxHeight: '60px', maxWidth: '200px' }} />
+                <img 
+                  src={invoice.signature} 
+                  alt="Signature électronique" 
+                  style={{ maxHeight: '60px', maxWidth: '200px' }} 
+                />
               </div>
             </div>
           )}
 
-          <table className="products-table">
+          <table className={INVOICE_PREVIEW_CLASSES.productsTable}>
             <thead>
               <tr>
                 <th>Quantité</th>
@@ -196,27 +211,28 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
             </tbody>
           </table>
 
-          <div className="totals">
+          {/* Totals Section */}
+          <div className={INVOICE_PREVIEW_CLASSES.totalSection}>
             <div className="total-row">
               <span className="total-label">Total HT:</span>
-              <span className="total-value">{formatCurrency(totalHT)}</span>
+              <span className="total-value">{formatCurrency(totals.totalHT)}</span>
             </div>
             <div className="total-row">
               <span className="total-label">TVA ({invoice.taxRate}%):</span>
-              <span className="total-value">{formatCurrency(totalTVA)}</span>
+              <span className="total-value">{formatCurrency(totals.totalTVA)}</span>
             </div>
-            {totalDiscount > 0 && (
+            {hasDiscount && (
               <div className="total-row" style={{ color: '#e53e3e' }}>
                 <span className="total-label">Remise totale:</span>
-                <span className="total-value">-{formatCurrency(totalDiscount)}</span>
+                <span className="total-value">-{formatCurrency(totals.totalDiscount)}</span>
               </div>
             )}
             <div className="total-row final-total">
               <span className="total-label">TOTAL TTC:</span>
-              <span className="total-value">{formatCurrency(totalTTC)}</span>
+              <span className="total-value">{formatCurrency(totals.totalTTC)}</span>
             </div>
             
-            {/* Mention légale Article L224‑59 - Fond blanc sans encadré */}
+            {/* Mention légale Article L224‑59 */}
             <div className="legal-mention-simple">
               <div className="legal-title">
                 ⚖️ Article L224‑59 du Code de la consommation
@@ -225,12 +241,15 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
                 « Avant la conclusion de tout contrat entre un consommateur et un professionnel à l'occasion d'une foire, d'un salon […] le professionnel informe le consommateur qu'il ne dispose pas d'un délai de rétractation. »
               </div>
             </div>
+
             {/* Acompte si applicable */}
-            {acompteAmount > 0 && (
+            {hasDeposit && (
               <>
                 <div className="total-row" style={{ marginTop: '10px' }}>
                   <span className="total-label">Acompte versé:</span>
-                  <span className="total-value" style={{ color: '#3182ce' }}>{formatCurrency(acompteAmount)}</span>
+                  <span className="total-value" style={{ color: '#3182ce' }}>
+                    {formatCurrency(invoice.montantAcompte)}
+                  </span>
                 </div>
                 <div className="total-row" style={{ 
                   backgroundColor: '#fff3cd', 
@@ -240,7 +259,9 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
                   color: '#ff8c00'
                 }}>
                   <span className="total-label" style={{ fontWeight: 'bold' }}>RESTE À PAYER:</span>
-                  <span className="total-value" style={{ fontWeight: 'bold' }}>{formatCurrency(montantRestant)}</span>
+                  <span className="total-value" style={{ fontWeight: 'bold' }}>
+                    {formatCurrency(totals.totalARecevoir)}
+                  </span>
                 </div>
               </>
             )}
@@ -256,12 +277,12 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
         )}
 
         {/* Footer */}
-        <footer className="footer">
-          <h3>🌸 MYCONFORT</h3>
+        <footer className={INVOICE_PREVIEW_CLASSES.footer}>
+          <h3>🌸 {COMPANY_INFO.name}</h3>
           <p>Merci pour votre confiance !</p>
-          <p>Votre spécialiste en matelas et literie de qualité</p>
-          <p>88 Avenue des Ternes, 75017 Paris - Tél: 04 68 50 41 45</p>
-          <p>Email: myconfort@gmail.com - SIRET: 824 313 530 00027</p>
+          <p>{COMPANY_INFO.description}</p>
+          <p>{COMPANY_INFO.address}, {COMPANY_INFO.postalCode} {COMPANY_INFO.city} - Tél: {COMPANY_INFO.phone}</p>
+          <p>Email: {COMPANY_INFO.email} - SIRET: {COMPANY_INFO.siret}</p>
         </footer>
       </div>
       
@@ -270,3 +291,6 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
     </div>
   );
 };
+
+// Export par défaut pour compatibilité
+export default InvoicePreviewClean;

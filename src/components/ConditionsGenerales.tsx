@@ -2,7 +2,7 @@ import React from 'react';
 
 export const ConditionsGenerales: React.FC = () => {
   return (
-    <div className="conditions-generales page-break-before">
+    <div id="conditions-generales" className="conditions-generales page-break-before">
       <div className="conditions-header">
         <h1 style={{ textAlign: 'center', color: '#477A0C', marginBottom: '15px', fontSize: '18px' }}>
           CONDITIONS GÉNÉRALES DE VENTE
